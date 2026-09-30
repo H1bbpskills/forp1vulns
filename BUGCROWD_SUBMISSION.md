@@ -154,14 +154,12 @@ Output:
 
 ### Step 6: Save, compile and run the PoC
 
-Save the file `fs_truncation_poc.cpp` (attached to this report) into the `mpc-lib` folder, then:
+Save the attached `fs_truncation_poc.cpp` into the `mpc-lib` folder, then:
 
 ```bash
 g++ -std=c++17 -w -o poc_test fs_truncation_poc.cpp -lssl -lcrypto
 ./poc_test
 ```
-
-The PoC source is also available at: https://github.com/H1bbpskills/forp1vulns/blob/main/poc/fs_truncation_poc.cpp
 
 Expected output:
 ```
@@ -272,10 +270,10 @@ In `src/common/cosigner/mta.cpp`, line 130, change:
 
 ## Supporting Materials
 
-- **PoC source code:** https://github.com/H1bbpskills/forp1vulns/blob/main/poc/fs_truncation_poc.cpp
-- **Screen recording (.cast):** https://github.com/H1bbpskills/forp1vulns/blob/main/poc/exploit_recording.cast
-- **Animated SVG:** https://github.com/H1bbpskills/forp1vulns/blob/main/poc/exploit_recording.svg
-- **Screenshot of PoC output:** https://github.com/H1bbpskills/forp1vulns/blob/main/poc/exploit_result_screenshot.png
+- **fs_truncation_poc.cpp** — PoC source code (attached)
+- **exploit_result_screenshot.png** — Screenshot of PoC output (attached)
+- **exploit_recording.cast** — Terminal recording, playable with asciinema (attached)
+- **exploit_recording.svg** — Animated SVG of the recording (attached)
 
 ---
 

@@ -109,8 +109,6 @@ g++ -std=c++17 -w -o poc_test fs_truncation_poc.cpp -lssl -lcrypto
 ./poc_test
 ```
 
-The PoC source is also available at: https://github.com/H1bbpskills/forp1vulns/blob/main/poc/fs_truncation_poc.cpp
-
 **Expected output:**
 ```
 === Fiat-Shamir Hash Truncation PoC ===
