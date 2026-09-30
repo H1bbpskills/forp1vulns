@@ -108,13 +108,16 @@ Output:
 
 These are active in every protocol version — the buggy seed path is always reachable.
 
-### Step 5: Compile and run the PoC
+### Step 5: Save, compile and run the PoC
+
+Save the attached `fs_truncation_poc.cpp` into the `mpc-lib` folder, then:
 
 ```bash
-git clone https://github.com/H1bbpskills/forp1vulns.git
-g++ -std=c++17 -w -o poc_test forp1vulns/poc/fs_truncation_poc.cpp -lssl -lcrypto
+g++ -std=c++17 -w -o poc_test fs_truncation_poc.cpp -lssl -lcrypto
 ./poc_test
 ```
+
+The PoC source is also available at: https://github.com/H1bbpskills/forp1vulns/blob/main/poc/fs_truncation_poc.cpp
 
 **Expected output:**
 

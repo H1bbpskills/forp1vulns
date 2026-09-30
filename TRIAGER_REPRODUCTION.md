@@ -100,13 +100,16 @@ grep -n 'use_extended_seed.*0' src/common/cosigner/mta.cpp | head -4
 
 **What to look for:** 4 call sites hardcode `use_extended_seed=0`, which forces the buggy `generate_mta_range_zkp_seed` function (line 115) to be used instead of the correct `generate_mta_range_zkp_extended_seed` (line 83). These call sites are in the Rddh and log proofs — **active in ALL protocol versions**, not just old ones.
 
-### Step 6: Compile and run the PoC
+### Step 6: Save, compile and run the PoC
+
+Save the attached `fs_truncation_poc.cpp` into the `mpc-lib` folder, then:
 
 ```bash
-git clone https://github.com/H1bbpskills/forp1vulns.git
-g++ -std=c++17 -w -o poc_test forp1vulns/poc/fs_truncation_poc.cpp -lssl -lcrypto
+g++ -std=c++17 -w -o poc_test fs_truncation_poc.cpp -lssl -lcrypto
 ./poc_test
 ```
+
+The PoC source is also available at: https://github.com/H1bbpskills/forp1vulns/blob/main/poc/fs_truncation_poc.cpp
 
 **Expected output:**
 ```
