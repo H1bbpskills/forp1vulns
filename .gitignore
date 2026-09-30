@@ -1,2 +1,5 @@
 poc_test
 *.o
+__pycache__/
+*.pyc
+output/
