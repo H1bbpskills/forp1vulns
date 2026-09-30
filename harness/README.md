@@ -1,89 +1,77 @@
-# Bug Bounty Harness — Architecture & Usage
+# Bug Bounty Harness — Focused Web Testing
 
-A modular framework for systematic vulnerability research on authorized targets.
+Targeted harness for finding real P1-P3 web vulnerabilities on authorized targets.
 
-## Architecture Overview
+## Architecture
 
-```
-┌─────────────────────────────────────────────────────────┐
-│                    HARNESS CONTROLLER                    │
-│              (harness/controller.py)                     │
-│  Orchestrates recon → analysis → exploitation → report   │
-└───────────┬──────────┬──────────┬──────────┬────────────┘
-            │          │          │          │
-    ┌───────▼──┐ ┌─────▼────┐ ┌──▼───────┐ ┌▼──────────┐
-    │  RECON   │ │ ANALYSIS │ │ EXPLOIT  │ │ REPORTING │
-    │  MODULE  │ │  MODULE  │ │  MODULE  │ │  MODULE   │
-    └───────┬──┘ └─────┬────┘ └──┬───────┘ └┬──────────┘
-            │          │          │          │
-    ┌───────▼──┐ ┌─────▼────┐ ┌──▼───────┐ ┌▼──────────┐
-    │ - Scope  │ │ - SAST   │ │ - PoC    │ │ - CVSS    │
-    │   parse  │ │ - Deps   │ │   runner │ │   scoring │
-    │ - Asset  │ │ - Fuzzer │ │ - Payload│ │ - Template│
-    │   enum   │ │ - Manual │ │   gen    │ │   render  │
-    │ - Tech   │ │   review │ │ - Impact │ │ - Platform│
-    │   detect │ │ - Config │ │   verify │ │   submit  │
-    └──────────┘ └──────────┘ └──────────┘ └───────────┘
-```
-
-## Directory Layout
+Two-pass approach: **black-box first** (no auth), then **grey-box** (authenticated).
 
 ```
-harness/
-├── README.md              # This file
-├── controller.py          # Main orchestrator
-├── config.py              # Target & scope configuration
-├── recon/
-│   ├── __init__.py
-│   ├── scope_parser.py    # Parse program scope into targets
-│   ├── asset_enum.py      # Enumerate endpoints, repos, APIs
-│   └── tech_detect.py     # Fingerprint stack/frameworks
-├── analysis/
-│   ├── __init__.py
-│   ├── static_review.py   # Pattern-based source code review
-│   ├── dependency_audit.py # Known CVE / supply chain checks
-│   ├── config_review.py   # Misconfig detection
-│   └── fuzzer.py          # Protocol/input fuzzing harness
-├── exploit/
-│   ├── __init__.py
-│   ├── poc_runner.py       # Execute & validate PoC scripts
-│   ├── payload_gen.py      # Context-aware payload generation
-│   └── impact_verify.py   # Confirm real-world impact
-├── reporting/
-│   ├── __init__.py
-│   ├── cvss_scorer.py      # CVSS 3.1 vector calculator
-│   ├── template_render.py  # Markdown report generator
-│   └── platform_submit.py  # HackerOne/Bugcrowd formatters
-├── templates/
-│   ├── finding.md          # Per-finding template
-│   └── full_report.md      # Full assessment template
-└── tests/
-    ├── test_recon.py
-    ├── test_analysis.py
-    └── test_reporting.py
+                    ┌──────────────────────┐
+                    │     TARGET CONFIG     │
+                    │  base_url, scope,     │
+                    │  wordlists, creds     │
+                    └──────────┬───────────┘
+                               │
+              ┌────────────────┴────────────────┐
+              │                                 │
+     ═════ PASS 1: BLACK-BOX ═════    ═════ PASS 2: GREY-BOX ═════
+              │                                 │
+     ┌────────▼────────┐               ┌───────▼────────┐
+     │  ENDPOINT        │               │  AUTH MANAGER   │
+     │  DISCOVERY       │               │  Login, tokens, │
+     │                  │               │  session mgmt   │
+     │  • Crawl sitemap │               └───────┬────────┘
+     │  • Brute paths   │                       │
+     │  • Check no-auth │               ┌───────▼────────┐
+     │    access         │               │  IDOR SCANNER   │
+     └────────┬────────┘               │                 │
+              │                         │  • Swap IDs     │
+     ┌────────▼────────┐               │  • UUID predict │
+     │  INFO DISCLOSURE │               │  • Param tamper │
+     │                  │               └───────┬────────┘
+     │  • Error pages   │                       │
+     │  • Headers leak  │               ┌───────▼────────┐
+     │  • Debug endpts  │               │  AUTHZ TESTER   │
+     │  • Source maps   │               │                 │
+     │  • .env / .git   │               │  • Horiz priv   │
+     └────────┬────────┘               │  • Vert priv    │
+              │                         │  • Role bypass  │
+              │                         └───────┬────────┘
+              └────────────┬────────────────────┘
+                           │
+                  ┌────────▼────────┐
+                  │    REPORTER      │
+                  │  Findings + PoC  │
+                  │  CVSS scoring    │
+                  │  Platform format │
+                  └─────────────────┘
 ```
-
-## Workflow
-
-1. **Configure** — Define target scope in `config.py`
-2. **Recon** — Enumerate attack surface within authorized scope
-3. **Analyze** — Run static analysis, dependency checks, manual review
-4. **Exploit** — Build PoC, verify impact, document reproduction
-5. **Report** — Score severity, render report, format for platform
 
 ## Usage
 
 ```bash
-python harness/controller.py --target <scope> --phase all
-python harness/controller.py --target <scope> --phase recon
-python harness/controller.py --target <scope> --phase analyze
-python harness/controller.py --target <scope> --phase report
+# Pass 1: Find what's exposed without auth
+python -m harness.run --target https://api.example.com --phase blackbox
+
+# Pass 2: Test IDOR + authz with credentials
+python -m harness.run --target https://api.example.com --phase greybox \
+  --user-token "eyJhbG..." --victim-token "eyJhbG..."
+
+# Full run
+python -m harness.run --target https://api.example.com --phase all \
+  --user-token "..." --victim-token "..."
 ```
 
-## Principles
+## What it finds
 
-- **Authorization first** — Never test without explicit scope authorization
-- **Minimal impact** — PoCs demonstrate, not damage
-- **Reproducibility** — Every finding must have exact repro steps
-- **Evidence chain** — Screenshots, logs, request/response pairs
-- **Honest severity** — CVSS reflects real impact, never inflated
+| Phase     | Bug Class                  | CWE     | Typical Severity |
+|-----------|----------------------------|---------|------------------|
+| Black-box | Unauth endpoint access     | CWE-306 | High-Critical    |
+| Black-box | Information disclosure      | CWE-200 | Low-Medium       |
+| Black-box | Debug/admin panel exposure  | CWE-489 | Medium-High      |
+| Black-box | Sensitive file exposure     | CWE-538 | Medium-High      |
+| Grey-box  | IDOR                        | CWE-639 | High-Critical    |
+| Grey-box  | Horizontal privilege esc    | CWE-284 | High             |
+| Grey-box  | Vertical privilege esc      | CWE-269 | Critical         |
+| Grey-box  | Missing function-level authz| CWE-285 | High             |
