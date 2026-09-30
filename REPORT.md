@@ -111,6 +111,7 @@ These are active in every protocol version — the buggy seed path is always rea
 ### Step 5: Compile and run the PoC
 
 ```bash
+git clone https://github.com/H1bbpskills/forp1vulns.git
 g++ -std=c++17 -w -o poc_test forp1vulns/poc/fs_truncation_poc.cpp -lssl -lcrypto
 ./poc_test
 ```

