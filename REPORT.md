@@ -187,9 +187,23 @@ A malicious cosigner gains a search space of ~2^3072 (from the 384 unbound bytes
 
 The independent range check on `z1` at line 975 prevents a single-shot forgery where a grossly out-of-range value is used. The attack requires many signing sessions to accumulate sufficient statistical bias.
 
-### SECURITY-MODEL.md scope
+### SECURITY-MODEL.md Alignment
 
-This is a library-level implementation bug in the `crypto/cosigner` layer (§1 responsibility). It is not an integrator-contract issue. Both prover and verifier code use the same buggy hash function. It violates §1.2.1 (Long-term key secrecy) over multiple protocol executions.
+**§1.2 property broken:** §1.2.1 (Long-term key secrecy). Over multiple signing sessions, the unbound bytes of `proof.A` give a malicious cosigner a per-session advantage in biasing MtA shares. Accumulated bias enables lattice-based key-share recovery.
+
+**§4.2 classification:** "Incomplete ZKP generation — A ZKP that, due to an integer overflow, an off-by-one, or a missing repetition, does not achieve the soundness level its parameters claim." The hash truncation means the Fiat-Shamir challenge binds to only 25% of `proof.A`, so the MtA range ZKP does not achieve its claimed soundness.
+
+**§4.7 applicability:** "A finding does not need a complete practical attack path to be valid. Cryptographic attacks do not need to be practical to be considered: a finding that demonstrates a soundness break under a theoretical model is in scope even if its practical exploitation requires capabilities beyond what is reasonable for any deployed adversary."
+
+**Not a safe-by-design pattern (§3):** This is not degenerate commitment parameters (§3.1), not point-at-infinity acceptance (§3.2), and not single-use semantics (§3.3). It is a pure implementation bug — the wrong variable name in a length argument.
+
+**Not a frequent wrong claim (§6):** This is not about drng determinism (§6.2), not about RFC 6979 (§6.3), not about OpenSSL randomness (§6.4), not about `is_coprime_fast` timing (§6.5), and not about point-at-infinity ZKP acceptance (§6.6).
+
+**Not an integrator-contract issue (§2):** The bug is entirely within library-internal code (`generate_mta_range_zkp_seed`). Both the prover (line 552) and verifier (line 988) call the same buggy function. No integrator behavior triggers or mitigates it.
+
+**Adversary capability (§4.6):** The attacker is a malicious cosigner (permitted under §1.1). They control their own MtA proof values and can search the 2^3072 collision space for favorable `(alpha, beta, r)` triples before submitting their proof.
+
+**Severity per §5:** §5.3 P3 (Medium) — "Cryptographic failures with low success probability that do not yet reach end-to-end §1.2 break." Potentially §5.2 P2 (High) — "Per-share secret extraction primitives that the attacker can combine across sessions."
 
 ---
 
