@@ -131,15 +131,15 @@ No `Content-Disposition: attachment` header — browser renders inline.
 - Attacker can phish victims using a trusted-looking AWS URL belonging to the target's infrastructure
 - CORS `*` allows any website to read S3 responses, enabling exfiltration of S3-hosted data
 
-### Escalation Potential (Main Origin XSS — P2/P1)
+### Escalation Analysis (Main Origin XSS — NOT Achievable)
 
-The following vectors could escalate to main origin XSS. They are **untested** but architecturally plausible based on code analysis:
+A comprehensive review of the entire frontend JavaScript codebase (main bundle `index-D981fcRf.js`, shared context chunk `context-CJcCnlS_.js`, and all 28 lazy-loaded chunks) was performed. **All three escalation vectors are confirmed NOT exploitable:**
 
-1. **Document/Evidence Upload:** If the document viewer on `partner.trustpoint.ai` renders uploaded HTML/SVG inline (via iframe/embed), the permissive CSP (`unsafe-inline`, `unsafe-eval`) would allow full script execution on the main origin. The `documentPage` chunk includes a viewer component that loads S3 content.
+1. **Document/Evidence Viewer — Safe.** The `documentPage-Bi1v9uCt.js` chunk uses PDF.js (`pdfjs-dist`) for PDF rendering, which draws to a `<canvas>` element — no script execution possible. Non-PDF files fall through to an image gallery using `<img>` tags, which sandbox SVG. No `<iframe>`, `<embed>`, or `<object>` is used to render user-uploaded S3 content on the main origin.
 
-2. **Message Field Injection:** The React app uses `dangerouslySetInnerHTML` with sanitizer functions (`dt()`, `ln()`) for rendering messages/comments. If the sanitizer is bypassable, injected HTML would execute on the main origin.
+2. **Message/Comment Field Injection — Sanitized.** Every `dangerouslySetInnerHTML` usage across the entire application (28+ chunks) passes through `sanitizeHtml()`, which calls `DOMPurify.sanitize()` with default configuration. This strips all `<script>` tags and event handlers. Confirmed in: `service-order-BAftzAk5.js`, `documentPage-Bi1v9uCt.js`, `project-DYyvIROU.js`, `order-service-v2-Bib1Rztt.js`, `requests-queue-BC1PPI2J.js`, and `context-CJcCnlS_.js`. The only `dangerouslySetInnerHTML` in the main bundle renders a platform announcement banner (admin-controlled, not user content).
 
-3. **Future Rendering Changes:** Any code change from `<img>` to `<embed>`, `<object>`, or `<iframe>` for avatar rendering would immediately escalate this to main origin XSS.
+3. **Avatar Rendering — Sandboxed.** The avatar component (`LD`) renders profile photos exclusively via `<img>` tags: `(0,B.jsx)("img",{src:u,alt:St(e),onError:f,...})`. The `<img>` tag sandboxes SVG and blocks all script execution. No code path renders avatars via `<embed>`, `<object>`, or `<iframe>`.
 
 ---
 
@@ -174,12 +174,15 @@ def validate_upload(file_bytes, declared_type):
 
 ## Bugcrowd VRT Classification
 
-| Scenario | VRT Category | Priority |
-|----------|-------------|----------|
-| Self-XSS on S3 origin (current) | Stored XSS — Self-Only | P4 |
-| XSS on S3 origin affecting other users | Stored XSS — Non-Self | P3 |
-| Main origin XSS via document viewer | Stored XSS — Non-Self, Main Origin | P2 |
-| Main origin XSS with session hijacking | Stored XSS — Non-Self, Main Origin | P1 |
+| Scenario | VRT Category | Priority | Status |
+|----------|-------------|----------|--------|
+| Self-XSS on S3 origin (current) | Stored XSS — Self-Only | P4 | **Confirmed** |
+| XSS on S3 origin affecting other users | Stored XSS — Non-Self | P3 | Requires social engineering (share presigned URL) |
+| Main origin XSS via document viewer | Stored XSS — Non-Self, Main Origin | P2 | **Ruled out** — PDF.js canvas + `<img>` fallback |
+| Main origin XSS via comment injection | Stored XSS — Non-Self, Main Origin | P2 | **Ruled out** — DOMPurify sanitization on all paths |
+| Main origin XSS with session hijacking | Stored XSS — Non-Self, Main Origin | P1 | **Ruled out** — no main-origin execution path exists |
+
+**Realistic severity: P4 (Self-XSS on S3 origin).** The XSS executes only on the S3 origin when the presigned URL is visited directly. No path exists to escalate to main origin XSS through the current codebase.
 
 ---
 
