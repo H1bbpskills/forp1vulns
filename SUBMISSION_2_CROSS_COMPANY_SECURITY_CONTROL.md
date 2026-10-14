@@ -13,6 +13,8 @@ A Borrower-role user can modify the Lender organization's company settings — i
 
 **Distinction from known IDOR:** The root cause is missing function-level authorization (BFLA / API5:2023), not predictable object references (BOLA / API1:2023). The company ID is obtained from the Borrower's own project context (the Lender is visible as a project participant), and the vulnerability is the ability to **write** to that company's security configuration — not the ability to discover or read it.
 
+**Cross-role proof this is BFLA, not IDOR:** The same `PATCH /api/v1/companies/<lender_company_id>/` request was tested from two different roles. The Inspector role receives `403 Forbidden`, while the Borrower role receives `200 OK`. If this were an IDOR issue (missing object-level checks), both roles would succeed or both would fail. The fact that the API differentiates by role but fails to block the Borrower proves the authorization logic is incomplete — a function-level authorization gap specific to the Borrower role's company-boundary enforcement.
+
 ---
 
 ## Steps to Reproduce
@@ -125,7 +127,8 @@ Both values reverted to original after testing.
 - **MFA bypass:** A Borrower can disable MFA for the Lender's entire organization, weakening authentication for all Lender users and enabling credential-based account takeover
 - **Phishing:** A Borrower can change the Lender's company URL to an attacker-controlled domain, which may appear in emails, reports, or UI elements referencing the Lender
 - **Security control manipulation:** Any company-level security setting (MFA, password authentication, camera mode requirements) can be toggled across company boundaries
-- **Scope:** The API performs no company-boundary check on the PATCH endpoint — any authenticated user can write to any company's configuration
+- **Scope:** The company-boundary check is missing specifically for the Borrower role — Inspector role is correctly blocked with `403 Forbidden` on the same endpoint, proving the authorization logic exists but is incomplete
+- **Cross-role evidence:** Same request from Inspector → `403`; from Borrower → `200`. This is not an IDOR (object-level) issue — it is a role-specific function-level authorization gap
 
 ---
 
