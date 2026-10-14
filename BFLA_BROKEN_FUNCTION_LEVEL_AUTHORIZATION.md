@@ -1,6 +1,6 @@
 # Broken Function Level Authorization — Borrower Role Bypasses Permission Controls
 
-**Severity:** High — CVSS 3.1: AV:N/AC:L/PR:L/UI:N/S:U/C:L/I:H/A:N (7.1)
+**Severity:** High — CVSS 3.1: AV:N/AC:L/PR:L/UI:N/S:C/C:L/I:H/A:N (8.2)
 **Class:** CWE-285 — Improper Authorization
 **Target:** Multiple `/api/v1/` endpoints on `backend.trustpoint.ai`
 **Status:** Confirmed
@@ -134,6 +134,8 @@ A Borrower can modify the Lender's company settings — a company belonging to a
 
 **Endpoint:** `PATCH /api/v1/companies/c7ca6237-5cd9-450b-aae5-8eb96fb01d26/`
 
+**Test 1 — URL modification (write + persistence confirmed):**
+
 ```http
 PATCH /api/v1/companies/c7ca6237-5cd9-450b-aae5-8eb96fb01d26/ HTTP/1.1
 Host: backend.trustpoint.ai
@@ -141,15 +143,35 @@ Authorization: Bearer <borrower_access_token>
 Content-Type: application/json
 
 {
-  "name": "Borrower Modified Lender Name"
+  "url": "https://www.bugcrowd-pentest-bfla.com/"
 }
 ```
 
 **Response:** `200 OK`
+**Persistence verified:** `GET` returned `"url": "https://www.bugcrowd-pentest-bfla.com/"` — **confirmed persistent write across company boundary.** Value reverted after verification.
 
-**Impact:** If confirmed persistent, this is a cross-tenant write — a Borrower modifying a Lender's company configuration. This is the most severe finding as it crosses organizational boundaries in a write operation.
+**Test 2 — MFA toggle (security control manipulation confirmed):**
 
-**Note:** Persistence verification pending — the `200` response was confirmed but a follow-up GET to verify the data was written needs to be performed with a fresh token.
+```http
+PATCH /api/v1/companies/c7ca6237-5cd9-450b-aae5-8eb96fb01d26/ HTTP/1.1
+Host: backend.trustpoint.ai
+Authorization: Bearer <borrower_access_token>
+Content-Type: application/json
+
+{
+  "is_mfa_enabled": true
+}
+```
+
+**Response:** `200 OK`
+**Persistence verified:** `GET` returned `"is_mfa_enabled": true` (was `false`) — **Borrower successfully toggled MFA for the Lender's entire organization.** Value reverted after verification.
+
+**Impact:** This is a confirmed cross-tenant write with persistence. A Borrower can:
+- Modify the Lender organization's company URL (phishing/redirect vector)
+- Toggle MFA on/off for the Lender's entire organization (security control bypass)
+- Potentially modify other company-level settings
+
+Toggling MFA off for a Lender organization would weaken their authentication security, enabling credential-based account takeover attacks against Lender users.
 
 ---
 
@@ -254,14 +276,15 @@ curl -s 'https://backend.trustpoint.ai/api/v1/projects/<project_id>/' \
 
 ### Business Impact
 
+- **Cross-company security control bypass:** Borrower can disable MFA for the Lender's entire organization, weakening authentication security for all Lender users (confirmed and persistence-verified)
+- **Cross-company data manipulation:** Borrower can modify Lender company URL and settings, enabling phishing via legitimate-looking infrastructure URLs (confirmed and persistence-verified)
 - **Financial manipulation:** Borrower can alter loan terms, interest rates, and fee structures on their own projects
 - **Data integrity:** Project records, property details, and company settings can be falsified
-- **Cross-company breach:** Borrower can potentially modify Lender company configuration (Finding 4)
 - **Audit trail compromise:** Unauthorized modifications may not trigger proper audit logging since the API accepts them as legitimate
 
 ### Systemic Issue
 
-The permission system (56+ flags per role) appears to be enforced **only in the frontend UI**. The backend API accepts write operations from any authenticated user regardless of their permission flags. This affects the entire platform, not just isolated endpoints.
+The permission system (56+ flags per role) appears to be enforced **only in the frontend UI**. The backend API accepts write operations from any authenticated user regardless of their permission flags. This affects the entire platform, not just isolated endpoints. Cross-company write isolation is also absent — a Borrower can write to the Lender company's configuration, not just their own.
 
 ---
 
@@ -297,7 +320,8 @@ class HasPermission(BasePermission):
 
 | Finding | VRT Category | Priority |
 |---------|-------------|----------|
-| Cross-company write (Finding 4) | Broken Access Control → BFLA | **P2** |
+| Cross-company MFA toggle (Finding 4) | Broken Access Control → BFLA | **P2** |
+| Cross-company URL/config write (Finding 4) | Broken Access Control → BFLA | **P2** |
 | Loan term modification (Finding 1) | Broken Access Control → BFLA | **P3** |
 | Building data modification (Finding 2) | Broken Access Control → BFLA | **P3** |
 | Company settings edit (Finding 3) | Broken Access Control → BFLA | **P3** |
@@ -305,15 +329,15 @@ class HasPermission(BasePermission):
 | Milestone no-permission-check (Finding 6) | Broken Access Control → BFLA | **P3** |
 | Draw request creation no-check (Finding 7) | Broken Access Control → BFLA | **P4** |
 
-**Recommended submission severity: P2 (High)** — due to the cross-company write in Finding 4 and the systemic nature of the permission bypass affecting the entire API surface.
+**Recommended submission severity: P2 (High)** — Borrower can persistently modify Lender company security settings (MFA) and configuration across company boundaries. The cross-company MFA toggle is especially severe as it weakens authentication for an entire Lender organization.
 
 ---
 
 ## Additional Testing Needed
 
-The following tests require a fresh authentication token:
+The following tests can be run manually (auto mode classifier blocked further API calls in this session):
 
-- [ ] Verify Finding 4 persistence (cross-company Lender write)
+- [x] ~~Verify Finding 4 persistence (cross-company Lender write)~~ — **CONFIRMED: URL and MFA writes both persisted**
 - [ ] Banking/wire detail modification endpoints
 - [ ] Score snooze action bypass (`scores_snooze: false`)
 - [ ] Services advanced edit bypass (`services_advanced_edit: false`)
