@@ -1,0 +1,13 @@
+========================================
+Subdomain Takeover Scan Results
+Date: 2026-10-16 20:24:29 UTC
+Target: T-Mobile Bug Bounty Subdomains
+Total subdomains scanned: 20162
+Total CNAME records found: 0
+Vulnerable CNAME patterns found: 0
+========================================
+
+No subdomains with CNAMEs pointing to known-vulnerable services were found.
+
+All CNAME records found are listed below for reference:
+
