@@ -1,0 +1,49 @@
+{
+  "critical": {
+    "firebase_api_key": "REDACTED_SEE_DIGITS_MAIN_JS",
+    "firebase_project": "phone-2-1247",
+    "google_maps_key": "REDACTED_SEE_DIGITS_MAIN_JS",
+    "analytics_key_1": "REDACTED_SEE_ANALYTICS_MAIN_JS",
+    "analytics_key_2": "REDACTED_SEE_ANALYTICS_MAIN_JS"
+  },
+  "internal_endpoints": [
+    "https://api-dev.lab.t-mobile.com/v1/digitsApi",
+    "https://api-devstg.t-mobile.com/v1/digitsApi",
+    "https://api-teststg.t-mobile.com/v1/digitsApi",
+    "https://cpaas-geo.t-mobile.com/v1/digitsApi"
+  ],
+  "digits_api_paths": [
+    "/v1/digitsApi",
+    "/digitsOrchestratorService",
+    "/digitsOrchestratorService/daas",
+    "/daas/lines/deviceInstances",
+    "/daas/call/e911/information",
+    "/digitslink/api/unlink",
+    "/digitslink/glink",
+    "/digitslink/mlink",
+    "/digitslink/v1/userlinkinfo",
+    "/v1/daasvmsvc",
+    "/v1/myStore",
+    "/v1/signout",
+    "/v1/userlinkinfo",
+    "/v2/auth",
+    "/v2/ottlogs",
+    "/chat/sessions",
+    "/chat/v1/"
+  ],
+  "firebase_config": {
+    "apiKey": "REDACTED",
+    "authDomain": "phone-2-1247.firebaseapp.com",
+    "projectId": "phone-2-1247",
+    "storageBucket": "phone-2-1247.appspot.com",
+    "messagingSenderId": "REDACTED",
+    "appId": "REDACTED",
+    "measurementId": "REDACTED",
+    "databaseURL": "https://phone-2-1247.firebaseio.com"
+  },
+  "oauth_endpoints": {
+    "google": "https://accounts.google.com/o/oauth2/v2/auth",
+    "microsoft": "https://login.microsoftonline.com/common/oauth2/v2.0/authorize",
+    "firebase_token": "https://securetoken.google.com/"
+  }
+}

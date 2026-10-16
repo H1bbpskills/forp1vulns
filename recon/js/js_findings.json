@@ -1,0 +1,1015 @@
+{
+  "secrets": [
+    {
+      "match": "ApiKey:\"REDACTED_ANALYTICS_KEY1\"",
+      "source": "https://account.my.t-mobile.com/etc.clientlibs/digx/analytics/clientlibs/clientlib-analytics-main.ACSHASH25875e9f9820e664da493d49045f5642.js",
+      "severity": "CRITICAL"
+    },
+    {
+      "match": "ApiKey:\"REDACTED_ANALYTICS_KEY2\"",
+      "source": "https://account.my.t-mobile.com/etc.clientlibs/digx/analytics/clientlibs/clientlib-analytics-main.ACSHASH25875e9f9820e664da493d49045f5642.js",
+      "severity": "CRITICAL"
+    },
+    {
+      "match": "apiKey:\"REDACTED_FIREBASE_KEY\"",
+      "source": "https://digits.t-mobile.com/./static/js/main.js",
+      "severity": "CRITICAL"
+    },
+    {
+      "match": "PASSWORD:\"password\"",
+      "source": "https://digits.t-mobile.com/./static/js/main.js",
+      "severity": "CRITICAL"
+    },
+    {
+      "match": "password: \"+t.hex;e=t.hex}if(void 0!==t.utf8&&(e=wt(t.utf8)),void 0!==t.rstr&&(e=At(t.rstr)),void 0!==t.b64&&(e=x(t.b64)),void 0!==t.b64u&&(e=St(t.b64u)),null==e)throw\"",
+      "source": "https://es.prepaid.t-mobile.com/etc.clientlibs/digx/platform/clientlibs/service-clientlibs/tpp-authorization.ACSHASH82b4c85a5441bc54cc069947a6294a34.js",
+      "severity": "CRITICAL"
+    }
+  ],
+  "tmobile_specific": [
+    {
+      "match": "https://www.t-mobile.com/",
+      "source": "https://account.my.t-mobile.com/etc.clientlibs/digx/analytics/clientlibs/clientlib-analytics-main.ACSHASH25875e9f9820e664da493d49045f5642.js",
+      "severity": "HIGH"
+    },
+    {
+      "match": "https://www.t-mobile.com/content/dam/t-mobile/ntm/branding/logos/corporate/tmo-logo-v4.svg",
+      "source": "https://account.my.t-mobile.com/etc.clientlibs/digx/analytics/clientlibs/clientlib-analytics-main.ACSHASH25875e9f9820e664da493d49045f5642.js",
+      "severity": "HIGH"
+    },
+    {
+      "match": "https://www.t-mobile.com",
+      "source": "https://account.my.t-mobile.com/etc.clientlibs/digx/analytics/clientlibs/clientlib-analytics-main.ACSHASH25875e9f9820e664da493d49045f5642.js",
+      "severity": "HIGH"
+    },
+    {
+      "match": "https://es.t-mobile.com",
+      "source": "https://account.my.t-mobile.com/etc.clientlibs/digx/analytics/clientlibs/clientlib-analytics-main.ACSHASH25875e9f9820e664da493d49045f5642.js",
+      "severity": "HIGH"
+    },
+    {
+      "match": "https://prepaid.t-mobile.com/prepaid-plans?brand=TMOPrepaid&amp",
+      "source": "https://account.my.t-mobile.com/etc.clientlibs/digx/analytics/clientlibs/clientlib-analytics-main.ACSHASH25875e9f9820e664da493d49045f5642.js",
+      "severity": "HIGH"
+    },
+    {
+      "match": "https://www.t-mobile.com/business/wireless-business-plans?INTNAV=tNav",
+      "source": "https://account.my.t-mobile.com/etc.clientlibs/digx/analytics/clientlibs/clientlib-analytics-main.ACSHASH25875e9f9820e664da493d49045f5642.js",
+      "severity": "HIGH"
+    },
+    {
+      "match": "https://www.t-mobile.com/community/?INTNAV=tNav",
+      "source": "https://account.my.t-mobile.com/etc.clientlibs/digx/analytics/clientlibs/clientlib-analytics-main.ACSHASH25875e9f9820e664da493d49045f5642.js",
+      "severity": "HIGH"
+    },
+    {
+      "match": "https://www.t-mobile.com/business?INTNAV=tNav",
+      "source": "https://account.my.t-mobile.com/etc.clientlibs/digx/analytics/clientlibs/clientlib-analytics-main.ACSHASH25875e9f9820e664da493d49045f5642.js",
+      "severity": "HIGH"
+    },
+    {
+      "match": "https://prepaid.t-mobile.com/home?INTNAV=tNav",
+      "source": "https://account.my.t-mobile.com/etc.clientlibs/digx/analytics/clientlibs/clientlib-analytics-main.ACSHASH25875e9f9820e664da493d49045f5642.js",
+      "severity": "HIGH"
+    },
+    {
+      "match": "https://www.t-mobile.com/dns?INTNAV=fNav",
+      "source": "https://account.my.t-mobile.com/etc.clientlibs/digx/analytics/clientlibs/clientlib-analytics-main.ACSHASH25875e9f9820e664da493d49045f5642.js",
+      "severity": "HIGH"
+    },
+    {
+      "match": "https://www.t-mobile.com/cell-phone-plans?icid=MGPO_TMO_P_EVGHPPLANS_7180E8C4E46C28D445700",
+      "source": "https://account.my.t-mobile.com/etc.clientlibs/digx/analytics/clientlibs/clientlib-analytics-main.ACSHASH25875e9f9820e664da493d49045f5642.js",
+      "severity": "HIGH"
+    },
+    {
+      "match": "https://www.t-mobile.com/cell-phones?icid=MGPO_TMO_P_EVGHPDEALS_1DCFDD35858D2F5E45701",
+      "source": "https://account.my.t-mobile.com/etc.clientlibs/digx/analytics/clientlibs/clientlib-analytics-main.ACSHASH25875e9f9820e664da493d49045f5642.js",
+      "severity": "HIGH"
+    },
+    {
+      "match": "https://www.t-mobile.com/home-internet?icid=MGPO_TMO_P_EVGHINTYLP_A57530DACB1E02B545702",
+      "source": "https://account.my.t-mobile.com/etc.clientlibs/digx/analytics/clientlibs/clientlib-analytics-main.ACSHASH25875e9f9820e664da493d49045f5642.js",
+      "severity": "HIGH"
+    },
+    {
+      "match": "https://www.t-mobile.com/resources/how-to-join-us?icid=MGPO_TMO_P_EVGHPDEALS_1DCFDD35858D2F5E45703",
+      "source": "https://account.my.t-mobile.com/etc.clientlibs/digx/analytics/clientlibs/clientlib-analytics-main.ACSHASH25875e9f9820e664da493d49045f5642.js",
+      "severity": "HIGH"
+    },
+    {
+      "match": "https://www.t-mobile.com/resources/bring-your-own-phone?icid=MGPO_TMO_P_EVGHPDEALS_1DCFDD35858D2F5E45704",
+      "source": "https://account.my.t-mobile.com/etc.clientlibs/digx/analytics/clientlibs/clientlib-analytics-main.ACSHASH25875e9f9820e664da493d49045f5642.js",
+      "severity": "HIGH"
+    },
+    {
+      "match": "https://www.t-mobile.com/offers?icid=MGPO_TMO_P_EVGHPDEALS_1DCFDD35858D2F5E45705",
+      "source": "https://account.my.t-mobile.com/etc.clientlibs/digx/analytics/clientlibs/clientlib-analytics-main.ACSHASH25875e9f9820e664da493d49045f5642.js",
+      "severity": "HIGH"
+    },
+    {
+      "match": "https://www.t-mobile.com/switch/get-started?icid=MGPO_TMO_P_25PPSUTMIL_8B747C9EB5D80DEE45214",
+      "source": "https://account.my.t-mobile.com/etc.clientlibs/digx/analytics/clientlibs/clientlib-analytics-main.ACSHASH25875e9f9820e664da493d49045f5642.js",
+      "severity": "HIGH"
+    },
+    {
+      "match": "https://www.t-mobile.com/cell-phone/apple-iphone-duo?icid=MGPO_TMO_U_26PPDUOBYN_U8P13427176K190107545",
+      "source": "https://account.my.t-mobile.com/etc.clientlibs/digx/analytics/clientlibs/clientlib-analytics-main.ACSHASH25875e9f9820e664da493d49045f5642.js",
+      "severity": "HIGH"
+    },
+    {
+      "match": "https://www.t-mobile.com/switch/zero-out-of-pocket?icid=MGPO_TMO_U_26PPFREXPA_23140R3690571DE777964",
+      "source": "https://account.my.t-mobile.com/etc.clientlibs/digx/analytics/clientlibs/clientlib-analytics-main.ACSHASH25875e9f9820e664da493d49045f5642.js",
+      "severity": "HIGH"
+    },
+    {
+      "match": "https://www.t-mobile.com/cell-phone/apple-iphone-18-pro?icid=MGPO_TMO_U_26PPI18PBY_5299347J600614S1O4074",
+      "source": "https://account.my.t-mobile.com/etc.clientlibs/digx/analytics/clientlibs/clientlib-analytics-main.ACSHASH25875e9f9820e664da493d49045f5642.js",
+      "severity": "HIGH"
+    },
+    {
+      "match": "https://www.t-mobile.com/switch/get-started?icid=MGPO_TMO_P_25PPSUTMIL_8B747C9EB5D80DEE45977",
+      "source": "https://account.my.t-mobile.com/etc.clientlibs/digx/analytics/clientlibs/clientlib-analytics-main.ACSHASH25875e9f9820e664da493d49045f5642.js",
+      "severity": "HIGH"
+    },
+    {
+      "match": "https://www.t-mobile.com/switch/15-minute-switch?icid=MGPO_TMO_P_25PPSUTMIL_8B747C9EB5D80DEE45979",
+      "source": "https://account.my.t-mobile.com/etc.clientlibs/digx/analytics/clientlibs/clientlib-analytics-main.ACSHASH25875e9f9820e664da493d49045f5642.js",
+      "severity": "HIGH"
+    },
+    {
+      "match": "https://www.t-mobile.com/switch/15-minute-switch?icid=MGPO_TMO_P_25PPSUTMIL_8B747C9EB5D80DEE45980",
+      "source": "https://account.my.t-mobile.com/etc.clientlibs/digx/analytics/clientlibs/clientlib-analytics-main.ACSHASH25875e9f9820e664da493d49045f5642.js",
+      "severity": "HIGH"
+    },
+    {
+      "match": "https://www.t-mobile.com/switch/get-started?icid=MGPO_TMO_P_25PPSUTMIL_8B747C9EB5D80DEE46071",
+      "source": "https://account.my.t-mobile.com/etc.clientlibs/digx/analytics/clientlibs/clientlib-analytics-main.ACSHASH25875e9f9820e664da493d49045f5642.js",
+      "severity": "HIGH"
+    },
+    {
+      "match": "https://secure.t-mobile.com/easy-switch?icid=MGPO_TMO_P_25PPSUTMIL_8B747C9EB5D80DEE46072",
+      "source": "https://account.my.t-mobile.com/etc.clientlibs/digx/analytics/clientlibs/clientlib-analytics-main.ACSHASH25875e9f9820e664da493d49045f5642.js",
+      "severity": "HIGH"
+    },
+    {
+      "match": "https://www.t-mobile.com/cell-phone/samsung-galaxy-s26-plus?icid=MGPO_TMO_U_26PPS26OUE_812039213U6298S979R37",
+      "source": "https://account.my.t-mobile.com/etc.clientlibs/digx/analytics/clientlibs/clientlib-analytics-main.ACSHASH25875e9f9820e664da493d49045f5642.js",
+      "severity": "HIGH"
+    },
+    {
+      "match": "https://www.t-mobile.com/switch/pay-off-carrier-etf-phone-deal?INTNAV=tNav",
+      "source": "https://account.my.t-mobile.com/etc.clientlibs/digx/analytics/clientlibs/clientlib-analytics-main.ACSHASH25875e9f9820e664da493d49045f5642.js",
+      "severity": "HIGH"
+    },
+    {
+      "match": "https://www.t-mobile.com/cell-phone/apple-iphone-18-pro-max?icid=MGPO_TMO_U_26PPI18P1K_9L86146F41219U3838050",
+      "source": "https://account.my.t-mobile.com/etc.clientlibs/digx/analytics/clientlibs/clientlib-analytics-main.ACSHASH25875e9f9820e664da493d49045f5642.js",
+      "severity": "HIGH"
+    },
+    {
+      "match": "https://www.t-mobile.com/resources/bring-your-own-phone?icid=MGPO_TMO_P_26PPBYO720_751W72440Y0284128A864",
+      "source": "https://account.my.t-mobile.com/etc.clientlibs/digx/analytics/clientlibs/clientlib-analytics-main.ACSHASH25875e9f9820e664da493d49045f5642.js",
+      "severity": "HIGH"
+    },
+    {
+      "match": "https://www.t-mobile.com/home-internet/doordash-same-day-internet?icid=HEIS_ISW_P_24HMENET_5E132E168196F61046137",
+      "source": "https://account.my.t-mobile.com/etc.clientlibs/digx/analytics/clientlibs/clientlib-analytics-main.ACSHASH25875e9f9820e664da493d49045f5642.js",
+      "severity": "HIGH"
+    },
+    {
+      "match": "https://www.t-mobile.com/cell-phone/google-pixel-11?icid=MGPO_TMO_U_26PXL11900_P386842413S92K8493199",
+      "source": "https://account.my.t-mobile.com/etc.clientlibs/digx/analytics/clientlibs/clientlib-analytics-main.ACSHASH25875e9f9820e664da493d49045f5642.js",
+      "severity": "HIGH"
+    },
+    {
+      "match": "https://www.t-mobile.com/cell-phone/apple-iphone-17?icid=MGPO_TMO_U_26PPI17U99_01B497274141T8337M240",
+      "source": "https://account.my.t-mobile.com/etc.clientlibs/digx/analytics/clientlibs/clientlib-analytics-main.ACSHASH25875e9f9820e664da493d49045f5642.js",
+      "severity": "HIGH"
+    },
+    {
+      "match": "https://www.t-mobile.com/cell-phone/motorola-razr-plus-2026?icid=MGPO_TMO_U_26PPRZPNPI_50899427P490B95923I90",
+      "source": "https://account.my.t-mobile.com/etc.clientlibs/digx/analytics/clientlibs/clientlib-analytics-main.ACSHASH25875e9f9820e664da493d49045f5642.js",
+      "severity": "HIGH"
+    },
+    {
+      "match": "https://www.t-mobile.com/cell-phones/deals/free?icid=MGPO_TMO_U_PPFREAFRDA_159764CA5BCCA8F946573",
+      "source": "https://account.my.t-mobile.com/etc.clientlibs/digx/analytics/clientlibs/clientlib-analytics-main.ACSHASH25875e9f9820e664da493d49045f5642.js",
+      "severity": "HIGH"
+    },
+    {
+      "match": "https://www.t-mobile.com/offers?icid=MGPO_TMO_P_EVGHPDEALS_AQ68DWG7E5FH0URK34884",
+      "source": "https://account.my.t-mobile.com/etc.clientlibs/digx/analytics/clientlibs/clientlib-analytics-main.ACSHASH25875e9f9820e664da493d49045f5642.js",
+      "severity": "HIGH"
+    },
+    {
+      "match": "https://www.t-mobile.com/cell-phone-plans?icid=MGPO_TMO_P_24IP4L25JL_037E1B92B0458F4D43922",
+      "source": "https://account.my.t-mobile.com/etc.clientlibs/digx/analytics/clientlibs/clientlib-analytics-main.ACSHASH25875e9f9820e664da493d49045f5642.js",
+      "severity": "HIGH"
+    },
+    {
+      "match": "https://www.t-mobile.com/cell-phone-plans?icid=MGPO_TMO_P_24IP4L25JL_037E1B92B0458F4D43923",
+      "source": "https://account.my.t-mobile.com/etc.clientlibs/digx/analytics/clientlibs/clientlib-analytics-main.ACSHASH25875e9f9820e664da493d49045f5642.js",
+      "severity": "HIGH"
+    },
+    {
+      "match": "https://www.t-mobile.com/cell-phone-plans?icid=MGPO_TMO_P_24IP4L25JL_037E1B92B0458F4D43924",
+      "source": "https://account.my.t-mobile.com/etc.clientlibs/digx/analytics/clientlibs/clientlib-analytics-main.ACSHASH25875e9f9820e664da493d49045f5642.js",
+      "severity": "HIGH"
+    },
+    {
+      "match": "https://www.t-mobile.com/membership?icid=MGPO_TMO_P_26TMOMM_EE785AF7270A052046911",
+      "source": "https://account.my.t-mobile.com/etc.clientlibs/digx/analytics/clientlibs/clientlib-analytics-main.ACSHASH25875e9f9820e664da493d49045f5642.js",
+      "severity": "HIGH"
+    },
+    {
+      "match": "https://www.t-mobile.com/coverage/satellite-phone-service?icid=MGPO_TMO_U_25NTWSAT_25DE49C3256EB4E344471",
+      "source": "https://account.my.t-mobile.com/etc.clientlibs/digx/analytics/clientlibs/clientlib-analytics-main.ACSHASH25875e9f9820e664da493d49045f5642.js",
+      "severity": "HIGH"
+    },
+    {
+      "match": "https://www.t-mobile.com/tv-streaming/hulu-on-us-deal?icid=MGPO_TMO_U_PPHULUONUS_39DD0278A97BED4746301",
+      "source": "https://account.my.t-mobile.com/etc.clientlibs/digx/analytics/clientlibs/clientlib-analytics-main.ACSHASH25875e9f9820e664da493d49045f5642.js",
+      "severity": "HIGH"
+    },
+    {
+      "match": "https://www.t-mobile.com/tv-streaming/netflix-on-us?icid=MGPO_TMO_C_26MGSTATUS_BC2F0E469AEBEC5E45583",
+      "source": "https://account.my.t-mobile.com/etc.clientlibs/digx/analytics/clientlibs/clientlib-analytics-main.ACSHASH25875e9f9820e664da493d49045f5642.js",
+      "severity": "HIGH"
+    },
+    {
+      "match": "https://www.t-mobile.com/tv-streaming/apple-tv-plus-deal?icid=MGPO_TMO_P_24Q4APPLTV_C70D3329893BA51243539",
+      "source": "https://account.my.t-mobile.com/etc.clientlibs/digx/analytics/clientlibs/clientlib-analytics-main.ACSHASH25875e9f9820e664da493d49045f5642.js",
+      "severity": "HIGH"
+    },
+    {
+      "match": "https://www.t-mobile.com/benefits/scam-shield?icid=MGPO_TMO_P_BRNDBNFITS_F663050BE4CEA08738921",
+      "source": "https://account.my.t-mobile.com/etc.clientlibs/digx/analytics/clientlibs/clientlib-analytics-main.ACSHASH25875e9f9820e664da493d49045f5642.js",
+      "severity": "HIGH"
+    },
+    {
+      "match": "https://www.t-mobile.com/offers/t-mobile-tuesdays?icid=MGPO_TMO_P_EVGRNPSTPD_BAFKSOOMG5BKVB46G35693",
+      "source": "https://account.my.t-mobile.com/etc.clientlibs/digx/analytics/clientlibs/clientlib-analytics-main.ACSHASH25875e9f9820e664da493d49045f5642.js",
+      "severity": "HIGH"
+    },
+    {
+      "match": "https://www.t-mobile.com/cell-phone-plans/international-roaming-plans?icid=MGPO_TMO_P_EVGRNPSTPD_PUSTEAZGZADOHNMAE35694",
+      "source": "https://account.my.t-mobile.com/etc.clientlibs/digx/analytics/clientlibs/clientlib-analytics-main.ACSHASH25875e9f9820e664da493d49045f5642.js",
+      "severity": "HIGH"
+    },
+    {
+      "match": "https://www.t-mobile.com/brand/benefits?icid=MGPO_TMO_P_BRNDBNFITS_TNKMV6OAKC0RA0FE34914",
+      "source": "https://account.my.t-mobile.com/etc.clientlibs/digx/analytics/clientlibs/clientlib-analytics-main.ACSHASH25875e9f9820e664da493d49045f5642.js",
+      "severity": "HIGH"
+    },
+    {
+      "match": "https://www.t-mobile.com/home-internet?icid=MGPO_TMO_P_181PLUS6T_ZPP2P5C6R2Q7V55OE34915",
+      "source": "https://account.my.t-mobile.com/etc.clientlibs/digx/analytics/clientlibs/clientlib-analytics-main.ACSHASH25875e9f9820e664da493d49045f5642.js",
+      "severity": "HIGH"
+    },
+    {
+      "match": "https://www.t-mobile.com/business?icid=TFB_TMO_P_EVTMOTFB_A9C771C0AE9BE3F140320",
+      "source": "https://account.my.t-mobile.com/etc.clientlibs/digx/analytics/clientlibs/clientlib-analytics-main.ACSHASH25875e9f9820e664da493d49045f5642.js",
+      "severity": "HIGH"
+    },
+    {
+      "match": "https://www.t-mobile.com/coverage/coverage-map?icid=MGPO_TMO_U_NETWORK_F9F56EBA73E7F9E236688",
+      "source": "https://account.my.t-mobile.com/etc.clientlibs/digx/analytics/clientlibs/clientlib-analytics-main.ACSHASH25875e9f9820e664da493d49045f5642.js",
+      "severity": "HIGH"
+    },
+    {
+      "match": "https://www.t-mobile.com/benefits/travel?icid=MGPO_TMO_P_BRNDBNFITS_XTZ838YGXQBJDBXCU34916",
+      "source": "https://account.my.t-mobile.com/etc.clientlibs/digx/analytics/clientlibs/clientlib-analytics-main.ACSHASH25875e9f9820e664da493d49045f5642.js",
+      "severity": "HIGH"
+    },
+    {
+      "match": "https://www.t-mobile.com/membership?icid=MGPO_TMO_U_25MGSTATUS_677C000A88C1F90243223",
+      "source": "https://account.my.t-mobile.com/etc.clientlibs/digx/analytics/clientlibs/clientlib-analytics-main.ACSHASH25875e9f9820e664da493d49045f5642.js",
+      "severity": "HIGH"
+    },
+    {
+      "match": "https://www.t-mobile.com/offers/free-trial?icid=MGPO_TMO_P_5GNETWORK_3PRU5WWIB34G2EHMJ34920",
+      "source": "https://account.my.t-mobile.com/etc.clientlibs/digx/analytics/clientlibs/clientlib-analytics-main.ACSHASH25875e9f9820e664da493d49045f5642.js",
+      "severity": "HIGH"
+    },
+    {
+      "match": "https://www.t-mobile.com/privacy-center/privacy-notices/t-mobile-privacy-notice",
+      "source": "https://account.my.t-mobile.com/etc.clientlibs/digx/analytics/clientlibs/clientlib-analytics-main.ACSHASH25875e9f9820e664da493d49045f5642.js",
+      "severity": "HIGH"
+    },
+    {
+      "match": "https://referral.t-mobile.com/?INTNAV=fNav",
+      "source": "https://account.my.t-mobile.com/etc.clientlibs/digx/analytics/clientlibs/clientlib-analytics-main.ACSHASH25875e9f9820e664da493d49045f5642.js",
+      "severity": "HIGH"
+    },
+    {
+      "match": "https://promotions.t-mobile.com/?INTNAV=fNav",
+      "source": "https://account.my.t-mobile.com/etc.clientlibs/digx/analytics/clientlibs/clientlib-analytics-main.ACSHASH25875e9f9820e664da493d49045f5642.js",
+      "severity": "HIGH"
+    },
+    {
+      "match": "https://careers.t-mobile.com/?INTNAV=fNav",
+      "source": "https://account.my.t-mobile.com/etc.clientlibs/digx/analytics/clientlibs/clientlib-analytics-main.ACSHASH25875e9f9820e664da493d49045f5642.js",
+      "severity": "HIGH"
+    },
+    {
+      "match": "https://www.t-mobile.com/our-story?INTNAV=fNav",
+      "source": "https://account.my.t-mobile.com/etc.clientlibs/digx/analytics/clientlibs/clientlib-analytics-main.ACSHASH25875e9f9820e664da493d49045f5642.js",
+      "severity": "HIGH"
+    },
+    {
+      "match": "https://investor.t-mobile.com?INTNAV=fNav",
+      "source": "https://account.my.t-mobile.com/etc.clientlibs/digx/analytics/clientlibs/clientlib-analytics-main.ACSHASH25875e9f9820e664da493d49045f5642.js",
+      "severity": "HIGH"
+    },
+    {
+      "match": "https://www.t-mobile.com/news?INTNAV=fNav",
+      "source": "https://account.my.t-mobile.com/etc.clientlibs/digx/analytics/clientlibs/clientlib-analytics-main.ACSHASH25875e9f9820e664da493d49045f5642.js",
+      "severity": "HIGH"
+    },
+    {
+      "match": "https://careers.t-mobile.com?INTNAV=fNav",
+      "source": "https://account.my.t-mobile.com/etc.clientlibs/digx/analytics/clientlibs/clientlib-analytics-main.ACSHASH25875e9f9820e664da493d49045f5642.js",
+      "severity": "HIGH"
+    },
+    {
+      "match": "https://www.t-mobile.com/privacy-center/privacy-notices/t-mobile-privacy-notice?INTNAV=fNav",
+      "source": "https://account.my.t-mobile.com/etc.clientlibs/digx/analytics/clientlibs/clientlib-analytics-main.ACSHASH25875e9f9820e664da493d49045f5642.js",
+      "severity": "HIGH"
+    },
+    {
+      "match": "https://security.t-mobile.com/?INTNAV=fNav",
+      "source": "https://account.my.t-mobile.com/etc.clientlibs/digx/analytics/clientlibs/clientlib-analytics-main.ACSHASH25875e9f9820e664da493d49045f5642.js",
+      "severity": "HIGH"
+    },
+    {
+      "match": "https://www.t-mobile.com/privacy-center?INTNAV=fNav",
+      "source": "https://account.my.t-mobile.com/etc.clientlibs/digx/analytics/clientlibs/clientlib-analytics-main.ACSHASH25875e9f9820e664da493d49045f5642.js",
+      "severity": "HIGH"
+    },
+    {
+      "match": "https://www.t-mobile.com/responsibility/consumer-info?INTNAV=fNav",
+      "source": "https://account.my.t-mobile.com/etc.clientlibs/digx/analytics/clientlibs/clientlib-analytics-main.ACSHASH25875e9f9820e664da493d49045f5642.js",
+      "severity": "HIGH"
+    },
+    {
+      "match": "https://www.t-mobile.com/responsibility/consumer-info/safety/9-1-1?INTNAV=fNav",
+      "source": "https://account.my.t-mobile.com/etc.clientlibs/digx/analytics/clientlibs/clientlib-analytics-main.ACSHASH25875e9f9820e664da493d49045f5642.js",
+      "severity": "HIGH"
+    },
+    {
+      "match": "https://www.t-mobile.com/responsibility/legal/terms-and-conditions?INTNAV=fNav",
+      "source": "https://account.my.t-mobile.com/etc.clientlibs/digx/analytics/clientlibs/clientlib-analytics-main.ACSHASH25875e9f9820e664da493d49045f5642.js",
+      "severity": "HIGH"
+    },
+    {
+      "match": "https://www.t-mobile.com/responsibility/consumer-info/policies/terms-of-use?INTNAV=fNav",
+      "source": "https://account.my.t-mobile.com/etc.clientlibs/digx/analytics/clientlibs/clientlib-analytics-main.ACSHASH25875e9f9820e664da493d49045f5642.js",
+      "severity": "HIGH"
+    },
+    {
+      "match": "https://www.t-mobile.com/responsibility/consumer-info/accessibility-policy?INTNAV=fNav",
+      "source": "https://account.my.t-mobile.com/etc.clientlibs/digx/analytics/clientlibs/clientlib-analytics-main.ACSHASH25875e9f9820e664da493d49045f5642.js",
+      "severity": "HIGH"
+    },
+    {
+      "match": "https://www.t-mobile.com/responsibility/consumer-info/policies/internet-service?INTNAV=fNav",
+      "source": "https://account.my.t-mobile.com/etc.clientlibs/digx/analytics/clientlibs/clientlib-analytics-main.ACSHASH25875e9f9820e664da493d49045f5642.js",
+      "severity": "HIGH"
+    },
+    {
+      "match": "https://www.t-mobile.com&quot",
+      "source": "https://account.my.t-mobile.com/etc.clientlibs/digx/analytics/clientlibs/clientlib-analytics-main.ACSHASH25875e9f9820e664da493d49045f5642.js",
+      "severity": "HIGH"
+    },
+    {
+      "match": "https://www.t-mobile.com/responsibility/legal/licenses-and-patents?INTNAV=fNav",
+      "source": "https://account.my.t-mobile.com/etc.clientlibs/digx/analytics/clientlibs/clientlib-analytics-main.ACSHASH25875e9f9820e664da493d49045f5642.js",
+      "severity": "HIGH"
+    },
+    {
+      "match": "https://www.t-mobile.com/privacy-center/privacy-notices/t-mobile-privacy-notice.html?INTNAV=fNav",
+      "source": "https://account.my.t-mobile.com/etc.clientlibs/digx/analytics/clientlibs/clientlib-analytics-main.ACSHASH25875e9f9820e664da493d49045f5642.js",
+      "severity": "HIGH"
+    },
+    {
+      "match": "https://www.t-mobile.com/public/22c8264f4dfd48f2009167e0c6224a8b68d3071226fc",
+      "source": "https://account.my.t-mobile.com/etc.clientlibs/digx/experience/clientlibs/clientlib-elements/disclosure-menu.ACSHASH1cc864b4239783ab1a203bb6048ffab5.js",
+      "severity": "HIGH"
+    },
+    {
+      "match": "https://cpaas-geo.t-mobile.com/v1/digitsApi",
+      "source": "https://digits.t-mobile.com/./static/js/main.js",
+      "severity": "HIGH"
+    },
+    {
+      "match": "https://account.t-mobile.com",
+      "source": "https://digits.t-mobile.com/./static/js/main.js",
+      "severity": "HIGH"
+    },
+    {
+      "match": "https://digits.t-mobile.com",
+      "source": "https://digits.t-mobile.com/./static/js/main.js",
+      "severity": "HIGH"
+    },
+    {
+      "match": "https://www.t-mobile.com/privacy-center",
+      "source": "https://digits.t-mobile.com/./static/js/main.js",
+      "severity": "HIGH"
+    },
+    {
+      "match": "https://www.t-mobile.com/dns?brand=Magenta&site=NoSell_App&origin_url=tmo.digits",
+      "source": "https://digits.t-mobile.com/./static/js/main.js",
+      "severity": "HIGH"
+    },
+    {
+      "match": "https://www.t-mobile.com/privacy-center/our-practices/privacy-policy",
+      "source": "https://digits.t-mobile.com/./static/js/main.js",
+      "severity": "HIGH"
+    },
+    {
+      "match": "https://www.t-mobile.com/offers/digits-terms-of-use",
+      "source": "https://digits.t-mobile.com/./static/js/main.js",
+      "severity": "HIGH"
+    },
+    {
+      "match": "https://www.t-mobile.com/support/plans-features/using-digits",
+      "source": "https://digits.t-mobile.com/./static/js/main.js",
+      "severity": "HIGH"
+    },
+    {
+      "match": "https://account.t-mobile.com/signup/",
+      "source": "https://digits.t-mobile.com/./static/js/main.js",
+      "severity": "HIGH"
+    },
+    {
+      "match": "https://www.t-mobile.com/responsibility/legal/copyright",
+      "source": "https://digits.t-mobile.com/./static/js/main.js",
+      "severity": "HIGH"
+    },
+    {
+      "match": "https://mydigits.t-mobile.com",
+      "source": "https://digits.t-mobile.com/./static/js/main.js",
+      "severity": "HIGH"
+    },
+    {
+      "match": "https://wrc.t-mobile.com/wrcpro/customer/downloadHome.html",
+      "source": "https://digits.t-mobile.com/./static/js/main.js",
+      "severity": "HIGH"
+    },
+    {
+      "match": "https://my.t-mobile.com/account/profile/line_settings",
+      "source": "https://digits.t-mobile.com/./static/js/main.js",
+      "severity": "HIGH"
+    },
+    {
+      "match": "https://mydigits.t-mobile.com/consumer",
+      "source": "https://digits.t-mobile.com/./static/js/main.js",
+      "severity": "HIGH"
+    },
+    {
+      "match": "https://www.t-mobile.com/about-us",
+      "source": "https://digits.t-mobile.com/./static/js/main.js",
+      "severity": "HIGH"
+    },
+    {
+      "match": "https://investor.t-mobile.com/default.aspx",
+      "source": "https://digits.t-mobile.com/./static/js/main.js",
+      "severity": "HIGH"
+    },
+    {
+      "match": "https://www.t-mobile.com/news",
+      "source": "https://digits.t-mobile.com/./static/js/main.js",
+      "severity": "HIGH"
+    },
+    {
+      "match": "https://careers.t-mobile.com",
+      "source": "https://digits.t-mobile.com/./static/js/main.js",
+      "severity": "HIGH"
+    },
+    {
+      "match": "https://www.t-mobile.com/privacy-center/education/analytics-reporting",
+      "source": "https://digits.t-mobile.com/./static/js/main.js",
+      "severity": "HIGH"
+    },
+    {
+      "match": "https://www.t-mobile.com/responsibility/consumer-info",
+      "source": "https://digits.t-mobile.com/./static/js/main.js",
+      "severity": "HIGH"
+    },
+    {
+      "match": "https://www.t-mobile.com/responsibility/consumer-info/safety/9-1-1",
+      "source": "https://digits.t-mobile.com/./static/js/main.js",
+      "severity": "HIGH"
+    },
+    {
+      "match": "https://www.t-mobile.com/responsibility/legal/terms-and-conditions",
+      "source": "https://digits.t-mobile.com/./static/js/main.js",
+      "severity": "HIGH"
+    },
+    {
+      "match": "https://www.t-mobile.com/responsibility/consumer-info/policies/terms-of-use",
+      "source": "https://digits.t-mobile.com/./static/js/main.js",
+      "severity": "HIGH"
+    },
+    {
+      "match": "https://www.t-mobile.com/responsibility/consumer-info/accessibility-policy",
+      "source": "https://digits.t-mobile.com/./static/js/main.js",
+      "severity": "HIGH"
+    },
+    {
+      "match": "https://www.t-mobile.com/responsibility/consumer-info/policies/internet-service",
+      "source": "https://digits.t-mobile.com/./static/js/main.js",
+      "severity": "HIGH"
+    },
+    {
+      "match": "https://www.t-mobile.com/support/",
+      "source": "https://digits.t-mobile.com/./static/js/main.js",
+      "severity": "HIGH"
+    },
+    {
+      "match": "https://www.t-mobile.com/account/contact-us",
+      "source": "https://digits.t-mobile.com/./static/js/main.js",
+      "severity": "HIGH"
+    },
+    {
+      "match": "https://www.t-mobile.com/store-locator",
+      "source": "https://digits.t-mobile.com/./static/js/main.js",
+      "severity": "HIGH"
+    },
+    {
+      "match": "https://www.t-mobile.com/coverage/coverage-map",
+      "source": "https://digits.t-mobile.com/./static/js/main.js",
+      "severity": "HIGH"
+    },
+    {
+      "match": "https://api-dev.lab.t-mobile.com/v1/digitsApi",
+      "source": "https://digits.t-mobile.com/./static/js/main.js",
+      "severity": "HIGH"
+    },
+    {
+      "match": "https://eui1.account.t-mobile.com",
+      "source": "https://digits.t-mobile.com/./static/js/main.js",
+      "severity": "HIGH"
+    },
+    {
+      "match": "https://api-devstg.t-mobile.com/v1/digitsApi",
+      "source": "https://digits.t-mobile.com/./static/js/main.js",
+      "severity": "HIGH"
+    },
+    {
+      "match": "https://api-teststg.t-mobile.com/v1/digitsApi",
+      "source": "https://digits.t-mobile.com/./static/js/main.js",
+      "severity": "HIGH"
+    },
+    {
+      "match": "https://unav.t-mobile.com/client/unav.min.js",
+      "source": "https://digits.t-mobile.com/./static/js/main.js",
+      "severity": "HIGH"
+    },
+    {
+      "match": "MSISDN: \",r);return r},Zu=r=>{if(r)return r instanceof P0?r:new P0(hf(r),wi(r))},mh=r=>{if(r){if(r instanceof P0)return[r];if(typeof r==\"",
+      "source": "https://digits.t-mobile.com/./static/js/main.js",
+      "severity": "HIGH"
+    },
+    {
+      "match": "msisdn:\"all\"",
+      "source": "https://digits.t-mobile.com/./static/js/main.js",
+      "severity": "HIGH"
+    },
+    {
+      "match": "msisdn: \",t)}).catch(a=>(this.logger.warn(\"",
+      "source": "https://digits.t-mobile.com/./static/js/main.js",
+      "severity": "HIGH"
+    },
+    {
+      "match": "msisdn: \",t,a),Promise.resolve()))});this.logger=new zt(\"",
+      "source": "https://digits.t-mobile.com/./static/js/main.js",
+      "severity": "HIGH"
+    },
+    {
+      "match": "digitsApi",
+      "source": "https://digits.t-mobile.com/./static/js/main.js",
+      "severity": "HIGH"
+    },
+    {
+      "match": "digitslink/api/unlink",
+      "source": "https://digits.t-mobile.com/./static/js/main.js",
+      "severity": "HIGH"
+    },
+    {
+      "match": "DigitsAPI",
+      "source": "https://digits.t-mobile.com/./static/js/main.js",
+      "severity": "HIGH"
+    },
+    {
+      "match": "https://www.t-mobile.com/careers",
+      "source": "https://es.prepaid.t-mobile.com/etc.clientlibs/digx/platform/clientlibs/service-clientlibs/tpp-authorization.ACSHASH82b4c85a5441bc54cc069947a6294a34.js",
+      "severity": "HIGH"
+    }
+  ],
+  "debug_info": [
+    {
+      "match": "console.error(\"Amplitude experiment load failed\"",
+      "source": "https://account.my.t-mobile.com/etc.clientlibs/digx/analytics/clientlibs/clientlib-analytics-main.ACSHASH25875e9f9820e664da493d49045f5642.js",
+      "severity": "INFO"
+    },
+    {
+      "match": "console.error(\"Amplitude load failed\"",
+      "source": "https://account.my.t-mobile.com/etc.clientlibs/digx/analytics/clientlibs/clientlib-analytics-main.ACSHASH25875e9f9820e664da493d49045f5642.js",
+      "severity": "INFO"
+    },
+    {
+      "match": "console.error(\"Data center has not been passed correctly. Please follow the SDK installation instruction carefully.\"",
+      "source": "https://account.my.t-mobile.com/etc.clientlibs/digx/analytics/clientlibs/clientlib-analytics-main.ACSHASH25875e9f9820e664da493d49045f5642.js",
+      "severity": "INFO"
+    },
+    {
+      "match": "console.error(\"MoEngage Web SDK initialised multiple times. Please integrate the Web SDK only once!\"",
+      "source": "https://account.my.t-mobile.com/etc.clientlibs/digx/analytics/clientlibs/clientlib-analytics-main.ACSHASH25875e9f9820e664da493d49045f5642.js",
+      "severity": "INFO"
+    },
+    {
+      "match": "console.error(\"Moengage Web SDK loading failed.\"",
+      "source": "https://account.my.t-mobile.com/etc.clientlibs/digx/analytics/clientlibs/clientlib-analytics-main.ACSHASH25875e9f9820e664da493d49045f5642.js",
+      "severity": "INFO"
+    },
+    {
+      "match": "console.log(\"statusChangeCallback\"",
+      "source": "https://carrierfreedom.promos.t-mobile.com/app/common/directives/facebookAuthentication.js?id=14252900414",
+      "severity": "INFO"
+    },
+    {
+      "match": "debug:wn.DEBUG,verbose:wn.VERBOSE,info:wn.INFO,warn:wn.WARN,error:wn.ERROR,silent:wn.S",
+      "source": "https://digits.t-mobile.com/./static/js/main.js",
+      "severity": "INFO"
+    },
+    {
+      "match": "console.log(\"Invalid Exif data: Invalid thumbnail data.\"",
+      "source": "https://digits.t-mobile.com/./static/js/main.js",
+      "severity": "INFO"
+    },
+    {
+      "match": "console.log(\"Invalid Exif data: Invalid tag type.\"",
+      "source": "https://digits.t-mobile.com/./static/js/main.js",
+      "severity": "INFO"
+    },
+    {
+      "match": "console.log(\"Invalid Exif data: Invalid data offset.\"",
+      "source": "https://digits.t-mobile.com/./static/js/main.js",
+      "severity": "INFO"
+    },
+    {
+      "match": "console.log(\"Invalid Exif data: Invalid directory offset.\"",
+      "source": "https://digits.t-mobile.com/./static/js/main.js",
+      "severity": "INFO"
+    },
+    {
+      "match": "console.log(\"Invalid Exif data: Invalid directory size.\"",
+      "source": "https://digits.t-mobile.com/./static/js/main.js",
+      "severity": "INFO"
+    },
+    {
+      "match": "console.log(\"Invalid Exif data: Invalid segment size.\"",
+      "source": "https://digits.t-mobile.com/./static/js/main.js",
+      "severity": "INFO"
+    },
+    {
+      "match": "console.log(\"Invalid Exif data: Missing byte alignment offset.\"",
+      "source": "https://digits.t-mobile.com/./static/js/main.js",
+      "severity": "INFO"
+    },
+    {
+      "match": "console.log(\"Invalid Exif data: Invalid byte alignment marker.\"",
+      "source": "https://digits.t-mobile.com/./static/js/main.js",
+      "severity": "INFO"
+    },
+    {
+      "match": "console.log(\"Invalid Exif data: Missing TIFF marker.\"",
+      "source": "https://digits.t-mobile.com/./static/js/main.js",
+      "severity": "INFO"
+    },
+    {
+      "match": "console.log(\"Invalid IPTC data: Invalid segment offset.\"",
+      "source": "https://digits.t-mobile.com/./static/js/main.js",
+      "severity": "INFO"
+    },
+    {
+      "match": "console.log(\"Invalid IPTC data: Invalid segment size.\"",
+      "source": "https://digits.t-mobile.com/./static/js/main.js",
+      "severity": "INFO"
+    },
+    {
+      "match": "console.log(\"No IPTC data at this offset - could be XMP\"",
+      "source": "https://digits.t-mobile.com/./static/js/main.js",
+      "severity": "INFO"
+    },
+    {
+      "match": "console.log(\"Invalid meta data: Invalid segment size.\"",
+      "source": "https://digits.t-mobile.com/./static/js/main.js",
+      "severity": "INFO"
+    },
+    {
+      "match": "console.log(\"Invalid JPEG file: Missing JPEG marker.\"",
+      "source": "https://digits.t-mobile.com/./static/js/main.js",
+      "severity": "INFO"
+    },
+    {
+      "match": "console.log(\"Got file of length \"",
+      "source": "https://digits.t-mobile.com/./static/js/main.js",
+      "severity": "INFO"
+    },
+    {
+      "match": "console.log(\"Not a valid JPEG\"",
+      "source": "https://digits.t-mobile.com/./static/js/main.js",
+      "severity": "INFO"
+    },
+    {
+      "match": "console.log(\"Not a valid marker at offset \"",
+      "source": "https://digits.t-mobile.com/./static/js/main.js",
+      "severity": "INFO"
+    },
+    {
+      "match": "console.log(\"Found 0xFFE1 marker\"",
+      "source": "https://digits.t-mobile.com/./static/js/main.js",
+      "severity": "INFO"
+    },
+    {
+      "match": "console.log(\"Unknown tag: \"",
+      "source": "https://digits.t-mobile.com/./static/js/main.js",
+      "severity": "INFO"
+    },
+    {
+      "match": "console.log(\"Thumbnail image format is TIFF, which is not implemented.\"",
+      "source": "https://digits.t-mobile.com/./static/js/main.js",
+      "severity": "INFO"
+    },
+    {
+      "match": "console.log(\"Unknown thumbnail image format '",
+      "source": "https://digits.t-mobile.com/./static/js/main.js",
+      "severity": "INFO"
+    },
+    {
+      "match": "console.log(\"Thumbnail image format is RGB, which is not implemented.\"",
+      "source": "https://digits.t-mobile.com/./static/js/main.js",
+      "severity": "INFO"
+    },
+    {
+      "match": "console.log(\"Not valid EXIF data! \"",
+      "source": "https://digits.t-mobile.com/./static/js/main.js",
+      "severity": "INFO"
+    },
+    {
+      "match": "console.log(\"Not valid TIFF data! (no 0x4949 or 0x4D4D)\"",
+      "source": "https://digits.t-mobile.com/./static/js/main.js",
+      "severity": "INFO"
+    },
+    {
+      "match": "console.log(\"Not valid TIFF data! (no 0x002A)\"",
+      "source": "https://digits.t-mobile.com/./static/js/main.js",
+      "severity": "INFO"
+    },
+    {
+      "match": "console.log(\"Not valid TIFF data! (First offset less than 8)\"",
+      "source": "https://digits.t-mobile.com/./static/js/main.js",
+      "severity": "INFO"
+    },
+    {
+      "match": "console.log(\"FS.trackingDelegate['",
+      "source": "https://digits.t-mobile.com/./static/js/main.js",
+      "severity": "INFO"
+    },
+    {
+      "match": "console.log(\"LazyFiles on gzip forces download of the whole file when length is accessed\"",
+      "source": "https://digits.t-mobile.com/./static/js/main.js",
+      "severity": "INFO"
+    },
+    {
+      "match": "console.log(\"creating db\"",
+      "source": "https://digits.t-mobile.com/./static/js/main.js",
+      "severity": "INFO"
+    },
+    {
+      "match": "console.warn(\"a problem seems to have happened with Module.memoryInitializerRequest, status: \"",
+      "source": "https://digits.t-mobile.com/./static/js/main.js",
+      "severity": "INFO"
+    },
+    {
+      "match": "console.log(\"Decoding image failed\"",
+      "source": "https://digits.t-mobile.com/./static/js/main.js",
+      "severity": "INFO"
+    },
+    {
+      "match": "console.log(\"Could not create HEIF context\"",
+      "source": "https://digits.t-mobile.com/./static/js/main.js",
+      "severity": "INFO"
+    },
+    {
+      "match": "console.log(\"Could not parse HEIF file\"",
+      "source": "https://digits.t-mobile.com/./static/js/main.js",
+      "severity": "INFO"
+    },
+    {
+      "match": "console.log(\"Error loading image ids\"",
+      "source": "https://digits.t-mobile.com/./static/js/main.js",
+      "severity": "INFO"
+    },
+    {
+      "match": "console.log(\"No images found\"",
+      "source": "https://digits.t-mobile.com/./static/js/main.js",
+      "severity": "INFO"
+    },
+    {
+      "match": "console.log(\"Could not get image data for id\"",
+      "source": "https://digits.t-mobile.com/./static/js/main.js",
+      "severity": "INFO"
+    },
+    {
+      "match": "console.warn(\"Warning: react-fast-compare does not handle circular references.\"",
+      "source": "https://digits.t-mobile.com/./static/js/main.js",
+      "severity": "INFO"
+    },
+    {
+      "match": "console.warn('React-Modal: \"",
+      "source": "https://digits.t-mobile.com/./static/js/main.js",
+      "severity": "INFO"
+    },
+    {
+      "match": "console.log(\"bodyTrap ----------\"",
+      "source": "https://digits.t-mobile.com/./static/js/main.js",
+      "severity": "INFO"
+    },
+    {
+      "match": "console.log(\"edn bodyTrap ----------\"",
+      "source": "https://digits.t-mobile.com/./static/js/main.js",
+      "severity": "INFO"
+    },
+    {
+      "match": "console.log(\"portalOpenInstances ----------\"",
+      "source": "https://digits.t-mobile.com/./static/js/main.js",
+      "severity": "INFO"
+    },
+    {
+      "match": "console.log(\"end portalOpenInstances ----------\"",
+      "source": "https://digits.t-mobile.com/./static/js/main.js",
+      "severity": "INFO"
+    },
+    {
+      "match": "console.warn(\"Failed to inspect element style\"",
+      "source": "https://digits.t-mobile.com/./static/js/main.js",
+      "severity": "INFO"
+    },
+    {
+      "match": "console.warn(\"react-timer-hook: default export useTimer is deprecated, use named exports { useTimer, useStopwatch, useTime } instead\"",
+      "source": "https://digits.t-mobile.com/./static/js/main.js",
+      "severity": "INFO"
+    },
+    {
+      "match": "console.warn(\"react-timer-hook: { useTimer } Invalid expiryTimestamp settings\"",
+      "source": "https://digits.t-mobile.com/./static/js/main.js",
+      "severity": "INFO"
+    },
+    {
+      "match": "console.warn(\"react-timer-hook: { useTimer } Invalid onExpire settings function\"",
+      "source": "https://digits.t-mobile.com/./static/js/main.js",
+      "severity": "INFO"
+    },
+    {
+      "match": "console.error(\"This browser doesn'",
+      "source": "https://digits.t-mobile.com/./static/js/main.js",
+      "severity": "INFO"
+    },
+    {
+      "match": "console.error(\"forceFrameRate takes a positive int between 0 and 125, forcing framerates higher than 125 fps is not unsupported\"",
+      "source": "https://digits.t-mobile.com/./static/js/main.js",
+      "severity": "INFO"
+    },
+    {
+      "match": "console.warn(\"parseMsisdn: input is not a string. MSISDN: \"",
+      "source": "https://digits.t-mobile.com/./static/js/main.js",
+      "severity": "INFO"
+    },
+    {
+      "match": "console.warn(\"toMessageParty found more than one Administrator for these participants:\"",
+      "source": "https://digits.t-mobile.com/./static/js/main.js",
+      "severity": "INFO"
+    },
+    {
+      "match": "console.warn(\"Unknown entry participants: \"",
+      "source": "https://digits.t-mobile.com/./static/js/main.js",
+      "severity": "INFO"
+    },
+    {
+      "match": "console.warn(\"Failed to add Channel.\"",
+      "source": "https://digits.t-mobile.com/./static/js/main.js",
+      "severity": "INFO"
+    },
+    {
+      "match": "console.warn(\"Dropping Failed Channel:\"",
+      "source": "https://digits.t-mobile.com/./static/js/main.js",
+      "severity": "INFO"
+    },
+    {
+      "match": "console.error(\"base64Decode failed: \"",
+      "source": "https://digits.t-mobile.com/./static/js/main.js",
+      "severity": "INFO"
+    },
+    {
+      "match": "console.warn(\"WARNING: Selector handlers should return an array of rules.Returning a string containing multiple rules is deprecated.\"",
+      "source": "https://digits.t-mobile.com/./static/js/main.js",
+      "severity": "INFO"
+    },
+    {
+      "match": "console.warn(\"Attempted to set line color before SettingsService was initialized\"",
+      "source": "https://digits.t-mobile.com/./static/js/main.js",
+      "severity": "INFO"
+    },
+    {
+      "match": "console.warn(\"`modifier.function` is deprecated, use `modifier.fn`!\"",
+      "source": "https://digits.t-mobile.com/./static/js/main.js",
+      "severity": "INFO"
+    },
+    {
+      "match": "console.warn(\"WARNING: `gpuAcceleration` option moved to `computeStyle` modifier and will not be supported in future versions of Popper.js!\"",
+      "source": "https://digits.t-mobile.com/./static/js/main.js",
+      "severity": "INFO"
+    },
+    {
+      "match": "console.warn(\"WARNING: `arrow.element` must be child of its popper element!\"",
+      "source": "https://digits.t-mobile.com/./static/js/main.js",
+      "severity": "INFO"
+    },
+    {
+      "match": "console.warn(\"Offsets separated by white space(s) are deprecated, use a comma (,) instead.\"",
+      "source": "https://digits.t-mobile.com/./static/js/main.js",
+      "severity": "INFO"
+    },
+    {
+      "match": "console.warn(\"WindowScroller registerChild expects to be passed Element or null\"",
+      "source": "https://digits.t-mobile.com/./static/js/main.js",
+      "severity": "INFO"
+    },
+    {
+      "match": "console.warn(\"take(pattern) takes one argument but two were provided. Consider passing an array for listening to several action types\"",
+      "source": "https://digits.t-mobile.com/./static/js/main.js",
+      "severity": "INFO"
+    },
+    {
+      "match": "console.warn(\"take(channel) takes one argument but two were provided. Second argument is ignored.\"",
+      "source": "https://digits.t-mobile.com/./static/js/main.js",
+      "severity": "INFO"
+    },
+    {
+      "match": "console.log(\"Error: There seems to be an issue with your Mic\"",
+      "source": "https://digits.t-mobile.com/./static/js/main.js",
+      "severity": "INFO"
+    },
+    {
+      "match": "console.log(\"Error: Issue getting mic\"",
+      "source": "https://digits.t-mobile.com/./static/js/main.js",
+      "severity": "INFO"
+    },
+    {
+      "match": "console.warn(\"Warning: The autofocus prop has changed to autoFocus, support will be removed after react-select@1.0\"",
+      "source": "https://digits.t-mobile.com/./static/js/main.js",
+      "severity": "INFO"
+    },
+    {
+      "match": "console.error(\"Error starting the oauthService app:\"",
+      "source": "https://es.prepaid.t-mobile.com/etc.clientlibs/digx/platform/clientlibs/service-clientlibs/tpp-authorization.ACSHASH82b4c85a5441bc54cc069947a6294a34.js",
+      "severity": "INFO"
+    }
+  ],
+  "internal_urls": [
+    {
+      "match": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types/Common_types",
+      "source": "https://digits.t-mobile.com/./static/js/main.js",
+      "severity": "HIGH"
+    },
+    {
+      "match": "https://developer.mozilla.org/en-US/docs/Web/API/File_System_Access_API",
+      "source": "https://digits.t-mobile.com/./static/js/main.js",
+      "severity": "HIGH"
+    },
+    {
+      "match": "https://api-dev.lab.t-mobile.com/v1/digitsApi",
+      "source": "https://digits.t-mobile.com/./static/js/main.js",
+      "severity": "HIGH"
+    },
+    {
+      "match": "https://api-devstg.t-mobile.com/v1/digitsApi",
+      "source": "https://digits.t-mobile.com/./static/js/main.js",
+      "severity": "HIGH"
+    },
+    {
+      "match": "https://api-teststg.t-mobile.com/v1/digitsApi",
+      "source": "https://digits.t-mobile.com/./static/js/main.js",
+      "severity": "HIGH"
+    },
+    {
+      "match": "http://localhost:8080",
+      "source": "https://digits.t-mobile.com/./static/js/main.js",
+      "severity": "HIGH"
+    }
+  ]
+}
